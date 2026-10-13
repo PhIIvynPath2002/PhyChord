@@ -39,7 +39,11 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "script": "desktop/installer.nsi"
+      "script": "desktop/installer.nsi",
+      "installerLanguages": [
+        "en_US",
+        "zh_CN"
+      ]
     },
     "mac": {
       "target": "zip",
