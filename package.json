@@ -1,0 +1,52 @@
+{
+  "name": "phychord",
+  "version": "1.0.0",
+  "description": "Offline interactive classical harmony learning with local MIDI",
+  "author": "PhyChord",
+  "private": true,
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "test": "node tests/classical.test.cjs && node tests/voice-leading.test.cjs && node tests/score.test.cjs && node tests/pivot.test.cjs && node tests/engraving.test.cjs && node tests/desktop-security.test.cjs && node tests/audio.test.cjs && node tests/browser.test.cjs",
+    "start": "electron .",
+    "build:windows": "node desktop/build.cjs windows",
+    "build:macos": "node desktop/build.cjs macos"
+  },
+  "devDependencies": {
+    "electron": "44.7.0",
+    "electron-builder": "26.15.3",
+    "playwright": "1.62.1"
+  },
+  "build": {
+    "appId": "com.phychord.app",
+    "productName": "PhyChord",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "index.html",
+      "desktop/main.cjs",
+      "desktop/security.cjs",
+      "package.json",
+      "desktop/build.cjs",
+      "LICENSE-Bravura.txt"
+    ],
+    "asar": true,
+    "win": {
+      "target": "nsis",
+      "artifactName": "PhyChord1.0-Windows-${arch}-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "script": "desktop/installer.nsi"
+    },
+    "mac": {
+      "target": "zip",
+      "category": "public.app-category.education",
+      "identity": null,
+      "artifactName": "PhyChord1.0-macOS-${arch}.${ext}"
+    },
+    "artifactName": "PhyChord1.0-${os}-${arch}.${ext}"
+  }
+}

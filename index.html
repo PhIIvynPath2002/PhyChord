@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PhyChord</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#10151b;color:#e8edf2}*{box-sizing:border-box}body{max-width:960px;margin:auto;padding:32px 20px}header{display:flex;align-items:center;justify-content:space-between;gap:20px}h1{font-size:22px}small,.muted{color:#99a9b9}nav{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:24px 0}button,select{background:#202c38;color:inherit;border:1px solid #3a4b5b;border-radius:8px;padding:10px;cursor:pointer}button:hover{border-color:#69dab5}label{display:inline-flex;gap:8px;align-items:center}main{background:#18222c;border:1px solid #2b3b49;border-radius:18px;padding:28px}.key{color:#87a9c7}.chord{font-size:clamp(28px,5vw,44px);margin:20px 0 10px}.function{font-size:52px;color:#79dfbd;min-height:74px}.notes{margin-top:20px;color:#b9c9d9}#alternatives{padding-left:20px;line-height:1.8}#outside{color:#f4c784;line-height:1.7}footer{line-height:1.8;font-size:14px;margin-top:26px}#keyboard{position:relative;width:100%;height:clamp(72px,12vw,110px);margin:14px 0;overflow:hidden}#keyboard button{position:absolute;top:0;min-width:0;height:100%;padding:0;border:1px solid #72808c;background:#e1e8ed;color:#18222c;border-radius:0 0 6px 6px;touch-action:none;user-select:none}#keyboard button.black{background:#293644;height:64%;z-index:1;border-radius:0 0 3px 3px}#keyboard button.active{background:#79dfbd;color:#10251d}[hidden]{display:none!important}#status{font-size:13px;color:#b2c6da;line-height:1.7}.history{font-size:13px;color:#99a9b9;margin-top:14px}a{color:#79dfbd}
+input[type="text"],#spelling{background:#202c38;color:inherit;border:1px solid #3a4b5b;border-radius:6px;padding:8px;max-width:100%}#classicalDetails{line-height:1.9;margin:16px 0}#classicalCandidates{line-height:1.8}details{margin:12px 0}.function{font-size:clamp(24px,5vw,48px)}
+#satbPanel{margin-top:24px;line-height:1.8}#satbPanel input[type="number"]{width:68px;padding:6px}#satbPanel h2{font-size:20px}#keyboard button.error-note{outline:3px solid #f18b84;outline-offset:-3px}
+.harmony-line{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}#popSymbol{font-size:18px;color:#b9c9d9}#otherKeys,#analysisDetails{font-size:14px}#contextFindings:empty,#outside:empty{display:none}
+#liveStaff{margin-top:16px}.staff-svg{display:block;width:100%;height:auto;color:#18222c;background:#f7f5ed;border-radius:10px}#liveStaff .staff-svg{max-height:230px}#scoreWorkspace{position:fixed;inset:0;z-index:10;background:#10151b;overflow:auto;padding:24px max(16px,calc((100vw - 1300px)/2))}.score-open{overflow:hidden}.score-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0}#scoreStaff{overflow-x:auto;margin-top:20px}#scoreStaff svg{min-width:780px}#scoreNotes{background:#202c38;color:inherit;border:1px solid #3a4b5b;border-radius:8px;padding:11px;width:250px}#scoreAnalysis{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.score-event{font-size:12px}.selected{border-color:#79dfbd}#predictions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.prediction{border:1px solid #3a4b5b;border-radius:12px;padding:16px;font-size:13px;line-height:1.6}.prediction button{margin-right:8px}.prediction svg{margin-top:12px}.prediction p{color:#b9c9d9}@media(max-width:500px){body{padding:20px 12px}main{padding:18px}#scoreWorkspace{padding:16px}}
+
+:root{color-scheme:light;background:#fff;color:#111;font-family:Arial,system-ui,sans-serif}body{max-width:none;padding:20px 3vw;margin:0}header{align-items:center}h1{font-size:18px;font-weight:500}small,.muted,#status,.notes,.history{color:#666}button,select,input[type=text],#spelling{background:white;color:#222;border:0;border-bottom:1px solid #ddd;border-radius:0;padding:8px}button:hover{background:#f7f7f7;border-color:#999}nav{margin:16px 0}.stage{display:grid;grid-template-columns:minmax(260px,38%) 1fr;gap:6vw;min-height:60vh;align-items:center}main{background:none;border:0;border-radius:0;padding:0}.chord{font-size:42px;font-weight:400}.function{color:#111;font-weight:400}.key{color:#666}#liveStaff{margin:0}.staff-svg{background:white;border-radius:0;color:black}#liveStaff .staff-svg{max-height:none}#keyboard,#scoreKeyboard{position:relative;width:100%;height:clamp(70px,12vw,135px);margin:24px 0 0;overflow:hidden}#keyboard button,#scoreKeyboard button{position:absolute;top:0;height:100%;min-width:0;padding:0;border:1px solid #777;border-radius:0;background:white}#keyboard button.black,#scoreKeyboard button.black{background:#171717;height:64%;z-index:1}#keyboard button.active,#scoreKeyboard button.active{background:#93c7ff}#keyboard button:disabled{opacity:1;cursor:default}#popSymbol{color:#777}#scoreWorkspace{display:flex;flex-direction:column;background:white;padding:20px 3vw;color:black}#scoreWorkspace[hidden]{display:none}#scoreStaff{flex:1;overflow:auto;margin:35px 0 15px;min-height:260px}#scoreStaff svg{max-width:none;min-width:0}#scoreSummary{color:#666;font-size:13px;min-height:18px}#scoreKeyboard{flex-shrink:0}.prediction{border:0;border-top:1px solid #eee;border-radius:0;color:black}.prediction p{color:#666}#predictions{max-height:180px;overflow:auto}details{color:#666;font-size:13px}#spelling{font-size:12px}.notehead{cursor:pointer}.score-toolbar{font-size:13px;gap:12px;margin:16px 0}#scoreZoom{width:100px}@media(max-width:600px){.stage{grid-template-columns:1fr;gap:20px;min-height:55vh}#liveStaff{width:min(100%,400px)}.chord{font-size:30px}#scoreWorkspace{padding:16px}header h1 small{display:none}}
+body{min-height:100dvh;display:flex;flex-direction:column}.stage{flex:1;min-height:0}#keyboard{flex-shrink:0}
+
+:root{--page:#fff;--ink:#000;--muted:#000;--divider:#d5d5d5;--hover:#f5f5f5;--piano-white:#fff;--piano-black:#171717;--highlight:#93c7ff;color-scheme:light}
+:root[data-theme="dark"]{--page:#000;--ink:#fff;--muted:#fff;--divider:#555;--hover:#202020;--piano-white:#e5e5e5;--piano-black:#151515;--highlight:#5c9bd5;color-scheme:dark}
+html,body,#scoreWorkspace,.staff-svg{background:var(--page);color:var(--ink)}button,select,input[type=text],#spelling{background:var(--page);color:var(--ink);border-color:var(--divider)}button:hover{background:var(--hover)}main,.function,.chord,.prediction{color:var(--ink)}small,.muted,#status,.notes,.history,.key,#popSymbol,details,#scoreSummary,.prediction p{color:var(--muted)}.prediction{border-color:var(--divider)}#keyboard button,#scoreKeyboard button{background:var(--piano-white)}#keyboard button.black,#scoreKeyboard button.black{background:var(--piano-black)}#keyboard button.active,#scoreKeyboard button.active{background:var(--highlight)}#liveStaff{aspect-ratio:5/4;display:flex;align-items:center;justify-content:center;width:100%}#liveStaff .staff-svg{width:100%;height:100%;aspect-ratio:5/4}dialog{background:var(--page);color:var(--ink);border:1px solid var(--divider);border-radius:8px;padding:24px;max-width:calc(100vw - 32px)}dialog::backdrop{background:#0007}dialog h2{font-size:18px;font-weight:500}dialog select{max-width:250px}
+h1{font-size:28px;font-weight:500}.player-button{border:0;padding:0;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center}.player-button svg{width:32px;height:32px}.key-box,.function-label,.roman-label,.pop-label,.pivot-functions{pointer-events:auto;cursor:pointer}
+</style><!-- Bravura music glyph outlines: Copyright © 2026, Steinberg Media Technologies GmbH (http://www.steinberg.net/),
+with Reserved Font Name "Bravura".
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded,
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION AND CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+ -->
+</head><body>
+<header><h1>PhyChord</h1><div><button id="connect">连接 MIDI</button><button id="settingsButton">设置</button></div></header>
+<div id="status" role="status"></div>
+<nav><label>模式 <select id="mode"><option value="chord">学习模式（和弦分析）</option><option value="play">演奏模式</option></select></label><span id="keyControls"><select id="tonic" aria-label="主音"></select> <select id="quality" aria-label="调式"><option value="major">大调</option><option value="minor">小调</option></select></span><button id="openScore">打开乐谱</button><button id="reset">重置</button></nav>
+<div class="stage"><div id="liveStaff" aria-live="polite"></div><main aria-live="polite"><div class="key" id="currentKey">C 大调</div><div class="chord" id="chord"></div><div class="harmony-line"><div class="function" id="function"></div><span id="popSymbol" aria-label="流行和弦标记"></span></div><div id="inversion" class="muted"></div><details id="analysisDetails"><summary>和声分析详情</summary><section id="classicalDetails"></section></details><details><summary>本调候选分析与置信程度</summary><ul id="classicalCandidates"></ul></details><div id="contextFindings" class="notes"></div><label class="notes">等音拼写修正 <input id="spelling" placeholder="如 F Ab Db 或 Ab C D# F#" aria-label="等音拼写修正"></label><small id="spellingStatus"></small><details id="otherKeys"><summary>其他调的可能解释</summary><ul id="alternatives"></ul></details><div id="outside"></div><div class="notes" id="notes"></div><div class="history" id="history"></div></main></div>
+<div id="keyboard" aria-label="88 键交互式钢琴"></div>
+
+
+<section id="scoreWorkspace" hidden aria-label="学习乐谱编辑界面"><header><h1>PhyChord</h1><button id="closeScore">返回</button></header>
+<div class="score-toolbar"><label>调性 <select id="scoreTonic"></select><select id="scoreMode"><option value="major">大调</option><option value="minor">小调</option></select></label><label>变音 <select id="scoreAlter"><option value="auto">随调</option><option value="0">还原</option><option value="1">升</option><option value="-1">降</option><option value="2">重升</option><option value="-2">重降</option></select></label><label>缩放 <input id="scoreZoom" type="range" min=".5" max="2" step=".1" value="1"></label><button id="listenEvent" class="player-button" aria-label="从头播放乐谱" title="从头播放 · 52 BPM · 每个和声一拍" aria-pressed="false"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="1.7"/><path id="playGlyph" d="M13 9 L23 16 L13 23 Z" fill="currentColor"/></svg></button><select id="cadenceGoal" aria-label="连接目标"><option value="continue">继续乐句</option><option value="authentic">正格终止</option><option value="half">半终止</option></select><button id="predictNext">连接建议</button></div>
+<div id="scoreStaff" tabindex="0"></div><div id="scoreSummary" role="status"></div><div id="predictions"></div><div id="scoreKeyboard" aria-label="乐谱钢琴"></div></section>
+<dialog id="settings"><header><h2>设置</h2><button id="settingsClose">关闭</button></header><p><label>外观 <select id="themeSelect"><option value="system">跟随系统</option><option value="light">亮色</option><option value="dark">暗色</option></select></label></p><p><button id="settingsConnect">连接 / 刷新 MIDI 设备</button></p><label>MIDI 输入 <select id="midiDevice"><option value="*">所有 MIDI 输入</option></select></label><p id="midiSettingsStatus" class="muted">尚未授权 MIDI 访问</p><button id="keybindingsButton" aria-expanded="false">键位</button><div id="keybindings" hidden><p>鼠标左键：增加音符</p><p>鼠标右键：删除音符</p><p>回车键：下一和声</p><p>删除键：删除当前和声</p><p>← / →：移动光标</p></div></dialog>
+<script>
+'use strict';
+// All analysis is local. Modules: Harmony, ChordRecognition, Tonality, NonChord,
+// MIDIInput and UI. Pitch classes do not preserve enharmonic spelling.
+const NAMES=['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+const pc=n=>((n%12)+12)%12;
+const keyName=k=>NAMES[k.tonic]+' '+(k.mode==='major'?'大调':'小调');
+const Templates=[
+ ['maj','大三',[0,4,7]],['min','小三',[0,3,7]],['dim','减三',[0,3,6]],['aug','增三',[0,4,8]],
+ ['maj7','大七',[0,4,7,11]],['min7','小七',[0,3,7,10]],['dom7','属七',[0,4,7,10]],['half','半减七',[0,3,6,10]],['dim7','减七',[0,3,6,9]],
+ ['maj9','大九',[0,4,7,11,2]],['min9','小九',[0,3,7,10,2]],['dom9','属九',[0,4,7,10,2]],
+ ['sus4','挂四',[0,5,7]],['sus2','挂二',[0,2,7]],['six','大六',[0,4,7,9]],['min6','小六',[0,3,7,9]]
+].map(([id,name,intervals])=>({id,name,intervals}));
+const State={mode:'chord',selected:{tonic:0,mode:'major'},chord:null,previous:null,notes:[],history:[],pending:null,lastSignature:'',lastChange:0};
+const Harmony=(()=>{
+ // Sposobin: I=T, II=SII, III=DTIII, IV=S, V=D, VI=TSVI, VII=DVII.
+ // Natural minor: III is major, VI major, VII natural major (subtonic, not DVII).
+ // Harmonic minor additionally supplies major V/D7 and raised leading-tone DVII/VII7.
+ const tables={major:[[0,'maj','T'],[2,'min','SII'],[4,'min','DTIII'],[5,'maj','S'],[7,'maj','D'],[9,'min','TSVI'],[11,'dim','DVII'],[0,'maj7','T7'],[2,'min7','II7'],[4,'min7','III7'],[5,'maj7','S7'],[7,'dom7','D7'],[9,'min7','VI7'],[11,'half','VII7'],[11,'dim7','VII7'],[7,'dom9','D9']],minor:[[0,'min','T'],[2,'dim','SII'],[3,'maj','DTIII'],[5,'min','S'],[7,'maj','D'],[7,'min','D（自然小调）'],[8,'maj','TSVI'],[11,'dim','DVII'],[10,'maj','VII（自然音级）'],[0,'min7','T7'],[2,'half','II7'],[3,'maj7','III7'],[5,'min7','S7'],[7,'dom7','D7'],[7,'min7','V7（自然小调）'],[8,'maj7','VI7'],[11,'dim7','VII7'],[10,'dom7','VII7（自然音级）'],[7,'dom9','D9']]};
+ // Neapolitan chord (那不勒斯和弦): minor ♭II–IV–VI = [1,5,8]
+ // relative to tonic, a major triad on ♭II with subdominant function.
+ // N, N6 (usual Neapolitan sixth), N64 distinguish its actual inversion.
+ function isNeapolitan(c,k){return !!(c&&k&&k.mode==='minor'&&pc(c.root-k.tonic)===1&&c.type.id==='maj')}
+ function base(c,k){if(isNeapolitan(c,k))return 'N';return tables[k.mode].find(r=>r[0]===pc(c.root-k.tonic)&&r[1]===c.type.id)?.[2]||null}
+ function label(c,k,context={}){let b=base(c,k);if(!b)return null;
+ if(c.type.intervals.length===3){if(c.inversion===1)b+='6';if(c.inversion===2){if(b==='T'&&context.cadential)b='K64';else b+='64'}}
+ else if(c.type.intervals.length===4&&['maj7','min7','dom7','half','dim7'].includes(c.type.id)&&c.inversion>0){b=b.replace('7',['','65','43','2'][c.inversion])}
+ else if(c.inversion>0)b+=' / '+NAMES[c.bass];return b}
+ function relation(k,other){const d=pc(other.tonic-k.tonic),same=other.mode===k.mode;
+ if(same&&d===7)return [0,'属调'];if(same&&d===5)return [1,'下属调'];
+ if(!same&&d===(k.mode==='major'?9:3))return [2,'平行调（关系大小调）'];if(!same&&d===0)return [3,'同名调'];
+ if(other.mode==='minor'&&d===7)return [4,'属小调'];if(other.mode==='minor'&&d===5)return [5,'下属小调'];
+ let fifth=0;while(pc(fifth*7)!==d)fifth++;return [6+Math.min(fifth,12-fifth)+(same?0:1),'其他调']}
+ function alternatives(c,k){return Tonality.keys.filter(o=>o.tonic!==k.tonic||o.mode!==k.mode).map(o=>({key:o,label:label(c,o),rel:relation(k,o)})).filter(o=>o.label).sort((a,b)=>a.rel[0]-b.rel[0]||a.key.tonic-b.key.tonic)}
+ return {base,label,alternatives,isNeapolitan};
+})();
+const ChordRecognition={
+ basic(notes,key,previous){const pitches=[...new Set(notes.map(pc))];if(pitches.length<3)return null;const bass=Math.min(...notes);let candidates=[];
+ for(let root=0;root<12;root++)for(const type of Templates){const tones=type.intervals.map(i=>pc(root+i));if(!tones.every(n=>pitches.includes(n)))continue;
+ const outside=pitches.filter(n=>!tones.includes(n));const inversion=type.intervals.indexOf(pc(bass-root));const c={root,type,tones,outside,bass:pc(bass),inversion};
+ // Complete triads/sevenths take priority; a complete ninth beats a subset with
+ // discarded tones. For ambiguous subsets prefer continuity, in-key fit and bass.
+ c.score=outside.length*12+(inversion<0?3:0)+(type.intervals.length>4?1:0)+(type.id.startsWith('sus')?2:0);
+ if(key&&Harmony.base(c,key))c.score-=2;if(previous&&previous.root===root&&previous.type.id===type.id)c.score-=1;
+ candidates.push(c)}
+ candidates.sort((a,b)=>a.score-b.score||a.root-b.root);return candidates[0]||null},
+ recognize(notes,key,previous){const basic=this.basic(notes,key,previous);if(!key)return basic;
+ const candidate=Classical.analyze(notes,key).find(x=>x.id!=='diatonic'&&x.confidence>=.5);
+ if(candidate&&(!basic||basic.outside.length)){const root=candidate.root??key.tonic,tones=[...new Set(notes.map(pc))];return {root,type:{id:'special',name:Classical.acoustic(notes),intervals:tones.map(n=>pc(n-root))},tones,outside:[],bass:pc(Math.min(...notes)),inversion:0,special:true}}
+ return basic}
+};
+// Classical analysis is separate from acoustic template recognition. Confidence
+// is a heuristic evidence score, NOT a calibrated probability. Never infer a
+// historical name from pitch-class identity alone when spelling/context differs.
+const Spelling=(()=>{
+ const letters=['C','D','E','F','G','A','B'],natural=[0,2,4,5,7,9,11];
+ const tonics=['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+ function pitch(name){const m=/^([A-Ga-g])([#b♯♭]{0,2})$/.exec(name);if(!m)return null;return pc(natural[letters.indexOf(m[1].toUpperCase())]+[...m[2]].reduce((s,c)=>s+(c==='#'||c==='♯'?1:-1),0))}
+ function degree(key,degree,offset){const tonic=key.spelling||tonics[key.tonic],i=letters.indexOf(tonic[0]),target=pc(key.tonic+offset),li=(i+degree-1)%7;let d=pc(target-natural[li]);if(d>6)d-=12;return letters[li]+(d>0?'♯'.repeat(d):'♭'.repeat(-d))}
+ function auto(key){const result={};const scale=key.mode==='major'?[0,2,4,5,7,9,11]:[0,2,3,5,7,8,10];scale.forEach((x,i)=>result[pc(key.tonic+x)]=degree(key,i+1,x));return result}
+ function overrides(text,notes){const tokens=text.trim()?text.trim().split(/[\s,，–—]+/):[],unique=[...new Set(notes.map(pc))];const map={};for(const t of tokens){const p=pitch(t);if(p===null||!unique.includes(p)||map[p])return {map:{},error:'拼写需对应当前音高类，每个音高类填写一次，例如 F Ab Db。'};map[p]=t.replaceAll('b','♭').replaceAll('#','♯')}
+ return {map,error:''}}
+ function chord(key,root,rootDegree,intervals){const map={};intervals.forEach((n,i)=>map[pc(root+n)]=degree(key,rootDegree+2*i,pc(root-key.tonic)+n));return map}
+ return {pitch,degree,auto,overrides,tonics,chord};
+})();
+const Classical=(()=>{
+ const specs=[
+ {id:'N',name:'那不勒斯和弦',en:'Neapolitan Chord',ints:[1,5,8],degrees:[2,4,6],function:'前属功能',resolution:'N6 → V → i / I'},
+ {id:'It+6',name:'意大利增六和弦',en:'Italian Augmented Sixth',ints:[8,0,6],degrees:[6,1,4],function:'前属功能',resolution:'♭6 下行、♯4 上行，汇聚到属音；It+6 → V'},
+ {id:'Fr+6',name:'法国增六和弦',en:'French Augmented Sixth',ints:[8,0,2,6],degrees:[6,1,2,4],function:'前属功能',resolution:'Fr+6 → V'},
+ {id:'Ger+6',name:'德国增六和弦',en:'German Augmented Sixth',ints:[8,0,3,6],degrees:[6,1,3,4],function:'前属功能',resolution:'Ger+6 → 终止四六 → V（通常避免平行五度）'},
+ // Swiss and German are identical in MIDI, but ♯2 and ♭3 differ in spelling.
+ {id:'Sw+6',name:'瑞士增六和弦',en:'Swiss Augmented Sixth',ints:[8,0,3,6],degrees:[6,1,2,4],function:'前属功能',resolution:'Sw+6 → I64 → V；♯2 通常上行到 3'}
+ ];
+ const romans=['I','II','III','IV','V','VI','VII'];
+ function exact(pitches,tones){return pitches.length===tones.length&&tones.every(n=>pitches.includes(n))}
+ function figure(intervals,bass,root){const i=intervals.indexOf(pc(bass-root));return intervals.length===3?['','6','64'][i]??'（外音低音）':['7','65','43','2'][i]??'7（变化低音）'}
+ function triad(notes,k){const p=[...new Set(notes.map(pc))];for(let root=0;root<12;root++)for(const [quality,ints] of [['maj',[0,4,7]],['min',[0,3,7]]])if(exact(p,ints.map(i=>pc(root+i))))return {root,quality,bass:pc(Math.min(...notes))};return null}
+ function voiceMotion(before,after){
+ // Estimate voices by ordered register only when voice count is unchanged.
+ // This is evidence, not a reliable polyphonic voice tracker.
+ if(before.length!==after.length||!before.length)return null;const a=[...before].sort((x,y)=>x-y),b=[...after].sort((x,y)=>x-y);return a.map((n,i)=>({from:n,to:b[i],delta:b[i]-n}));}
+ function analyze(notes,key,context={}){
+ if(!key||new Set(notes.map(pc)).size<3)return [];const pitches=[...new Set(notes.map(pc))],bass=pc(Math.min(...notes)),result=[];
+ const previous=context.previous||null,next=context.next||null,nextTriad=next?triad(next.notes,key):null;
+ const add=x=>result.push({...x,confidence:Math.min(.96,Math.max(.1,x.confidence)),evidence:x.evidence||[],tones:x.tones||pitches});
+ for(const s of specs){const tones=s.ints.map(n=>pc(key.tonic+n));if(!exact(pitches,tones))continue;
+ const root=pc(key.tonic+(s.id==='N'?1:8)),inversion=s.ints.indexOf(pc(bass-key.tonic));
+ const spelling={};s.ints.forEach((n,i)=>spelling[pc(key.tonic+n)]=Spelling.degree(key,s.degrees[i],n));
+ const manual=context.spelling||{},contradicted=Object.entries(manual).some(([p,n])=>spelling[p]&&spelling[p]!==n);
+ const leadsDominant=nextTriad&&nextTriad.root===pc(key.tonic+7)&&nextTriad.quality==='maj';
+ const leads64=nextTriad&&nextTriad.root===key.tonic&&nextTriad.bass===pc(key.tonic+7);
+ let confidence=s.id==='N'?.9:.68;if(s.id==='Sw+6')confidence=.55;if(inversion!==0&&s.id!=='N')confidence-=.16;if(leadsDominant||leads64)confidence+=.15;if(Object.keys(manual).length&&!contradicted)confidence+=.12;if(contradicted)confidence-=.4;
+ const suffix=s.id==='N'?figure([0,4,7],bass,root):'';
+ add({id:s.id,label:s.id==='N'?'N'+suffix:s.id,roman:s.id==='N'?'♭II'+suffix:s.id,name:s.id==='N'&&suffix==='6'?'那不勒斯六和弦':s.name,en:s.id==='N'&&suffix==='6'?'Neapolitan Sixth':s.en,function:s.function,resolution:s.resolution,confidence,spelling,root,tones,
+ inversion:s.id==='N'?['原位','第一转位','第二转位'][[0,4,7].indexOf(pc(bass-root))]:(inversion===0?'常规位置（♭6 低音）':'非常规低音：'+(spelling[bass]||NAMES[bass])),
+ evidence:[s.id==='Sw+6'||s.id==='Ger+6'?'Ger / Sw 音高类相同，需拼写及解决区别':'音高类匹配',...(leadsDominant||leads64?['后续属和声支持']:[]),...(contradicted?['与手动拼写冲突']:[])]});}
+ // Applied dominants/leading-tone chords target major/minor scale triads;
+ // target iii/III etc. remains a candidate until its resolution is observed.
+ const scale=key.mode==='major'?[0,2,4,5,7,9,11]:[0,2,3,5,7,8,10];
+ const targetQuality=key.mode==='major'?['maj','min','min','maj','maj','min','dim']:['min','dim','maj','min','maj','maj','maj'];
+ for(let degree=0;degree<7;degree++){if(targetQuality[degree]==='dim')continue;const target=pc(key.tonic+scale[degree]),den=targetQuality[degree]==='min'?romans[degree].toLowerCase():romans[degree];
+ const patterns=[['V',[0,4,7]],['V',[0,4,7,10]],['vii°',[0,3,6]],['vii°',[0,3,6,9]],['viiø',[0,3,6,10]]];
+ for(const [kind,ints] of patterns){const root=pc(target+(kind==='V'?7:11)),tones=ints.map(i=>pc(root+i));if(!exact(pitches,tones))continue;
+ if(degree===0)continue;const f=figure(ints,bass,root),resolved=nextTriad&&nextTriad.root===target;
+ const isDouble=degree===4;add({id:kind+'/'+den,label:(isDouble?(kind==='V'?'DD':'DDVII'):'副'+(kind==='V'?'属':'导'))+f,roman:kind+f+'/'+den,name:isDouble?(kind==='V'?'重属和弦':'重属导和弦'):(kind==='V'?'副属和弦':'副导和弦'),en:kind==='V'?'Secondary Dominant':'Secondary Leading-tone Chord',function:'指向 '+den+' 的属功能',resolution:kind+f+'/'+den+' → '+den,confidence:resolved?.92:.63,root,tones,spelling:Spelling.chord(key,root,degree+1+(kind==='V'?4:6),ints),inversion:'转位数字：'+(f||'原位'),evidence:resolved?['目标和弦已出现']:['等待目标和弦解决']})}}
+ // Borrowing: only same-tonic opposite mode, not arbitrary chromatic triads.
+ const opposite={tonic:key.tonic,mode:key.mode==='major'?'minor':'major'};
+ const raw=ChordRecognition.basic(notes,key,null);
+ if(raw&&!raw.outside.length&&Harmony.base(raw,opposite)&&!Harmony.base(raw,key)){
+ const degScale=opposite.mode==='minor'?[0,2,3,5,7,8,10]:[0,2,4,5,7,9,11],d=degScale.indexOf(pc(raw.root-key.tonic));
+ if(d>=0){const alt=[0,2,4,5,7,9,11][d]!==degScale[d]?'♭':'';let numeral=raw.type.id.startsWith('min')?romans[d].toLowerCase():romans[d];if(raw.type.id==='dim'||raw.type.id==='half')numeral=romans[d].toLowerCase()+(raw.type.id==='half'?'ø':'°');
+ add({id:'borrowed',label:'借用 '+Harmony.label(raw,opposite),roman:alt+numeral+figure(raw.type.intervals,bass,raw.root),name:'同主音调式借用和弦',en:'Modal Mixture',function:'借自 '+keyName(opposite),resolution:'依据进行判断；借用 iv 常进入 V / I',confidence:.72,root:raw.root,spelling:Spelling.chord(opposite,raw.root,d+1,raw.type.intervals),inversion:'采用实际低音',evidence:['同主音另一调式内和弦']})}}
+ // Altered dominant includes complete third and seventh, plus an altered fifth
+ // or ninth; omitted fifth allowed in ninth variants, but never omitted third.
+ const domRoot=pc(key.tonic+7),rel=pitches.map(n=>pc(n-domRoot));
+ if(rel.includes(0)&&rel.includes(4)&&rel.includes(10)&&rel.some(n=>[1,3,6,8].includes(n))&&rel.every(n=>[0,1,3,4,6,7,8,10].includes(n))){const alterations=rel.filter(n=>[1,3,6,8].includes(n)).map(n=>({1:'♭9',3:'♯9',6:'♭5',8:'♯5'})[n]);add({id:'altered',label:'D7('+alterations.join(',')+')',roman:'V7('+alterations.join(',')+')',name:'变化属和弦',en:'Altered Dominant',function:'属功能',resolution:'变化音按趋向解决：V → I / i',confidence:.82,root:domRoot,inversion:'低音 '+NAMES[bass],evidence:['属根音、三音、七音及变化音齐全']})}
+ // Common-tone diminished seventh can have any spelling/root. Its function
+ // requires a major/minor triad with a retained pitch and stepwise neighbours.
+ const dimSet=[0,3,6,9];const isDim=pitches.length===4&&pitches.some(r=>exact(pitches,dimSet.map(i=>pc(r+i))));
+ const home=[key.tonic,pc(key.tonic+(key.mode==='major'?4:3)),pc(key.tonic+7)];
+ const targetNotes=nextTriad?next.notes:(previous&&triad(previous.notes,key)?previous.notes:null),targetPitches=targetNotes?[...new Set(targetNotes.map(pc))]:home;
+ const common=pitches.filter(p=>targetPitches.includes(p));
+ const neighbours=pitches.every(p=>targetPitches.some(t=>Math.min(pc(t-p),pc(p-t))<=2));
+ const retained=targetNotes&&notes.some(n=>targetNotes.includes(n));
+ if(isDim&&common.length&&neighbours)add({id:'CT°7',label:'CT°7',roman:'CT°7（装饰性）',name:'共同音减七和弦',en:'Common-tone Diminished Seventh',function:'共同音装饰功能',resolution:'保留共同音，其余声部级进到目标三和弦',confidence:nextTriad&&retained?.88:previous?.65:.4,evidence:[nextTriad&&retained?'共同音在后续三和弦中保持':'等待实际共同音保持与解决']});
+ const aug=result.find(x=>['It+6','Fr+6','Ger+6','Sw+6'].includes(x.id));
+ if(aug&&common.length&&neighbours){const tonicResolution=nextTriad&&nextTriad.root===key.tonic&&nextTriad.bass!==pc(key.tonic+7);add({id:'CT+6',label:'CT+6',roman:'CT+6（装饰性）',name:'共同音增六和弦',en:'Common-tone Augmented Sixth',function:'共同音装饰功能',resolution:'共同音保持，增六音级邻接解决到主和弦',confidence:tonicResolution&&retained?.91:.38,spelling:aug.spelling,evidence:[tonicResolution&&retained?'后续主和弦保持共同音':'与前属增六解释竞争，需后续解决']})}
+ if(raw&&raw.root===key.tonic&&raw.inversion===2&&!raw.outside.length&&['maj','min'].includes(raw.type.id))add({id:'K64',label:'K64（候选）',roman:(key.mode==='minor'?'i':'I')+'64',name:'终止四六和弦候选',en:'Cadential Six-four Candidate',function:'属功能装饰候选',resolution:'属低音保持，6–5 / 4–3 解决到 V',confidence:.48,root:raw.root,inversion:'第二转位',evidence:['需后续 V 与声部解决确认']});
+ if(raw&&!raw.outside.length&&Harmony.base(raw,key))add({id:'diatonic',label:Harmony.label(raw,key),roman:roman(raw,key),name:'调内和弦',en:'Diatonic Chord',function:'本调功能：'+Harmony.base(raw,key),resolution:'根据上下文判断',confidence:.8,root:raw.root,spelling:Spelling.chord(key,raw.root,(key.mode==='major'?[0,2,4,5,7,9,11]:[0,2,3,5,7,8,10]).indexOf(pc(raw.root-key.tonic))>=0?(key.mode==='major'?[0,2,4,5,7,9,11]:[0,2,3,5,7,8,10]).indexOf(pc(raw.root-key.tonic))+1:7,raw.type.intervals),inversion:'按实际低音',evidence:['调内音级匹配']});
+ result.sort((a,b)=>b.confidence-a.confidence);return result;
+ }
+ function roman(c,k){const scale=k.mode==='major'?[0,2,4,5,7,9,11]:[0,2,3,5,7,8,10];let d=scale.indexOf(pc(c.root-k.tonic));if(d<0&&pc(c.root-k.tonic)===11)d=6;if(d<0)return '变化和弦';let r=romans[d];if(['min','min7','dim','dim7','half'].includes(c.type.id))r=r.toLowerCase();if(['dim','dim7'].includes(c.type.id))r+='°';if(c.type.id==='half')r+='ø';return r+figure(c.type.intervals,c.bass,c.root)}
+ function acoustic(notes){const c=ChordRecognition.basic(notes,null,null);return c?NAMES[c.root]+' '+c.type.name+(c.inversion>0?' / '+NAMES[c.bass]:''): '非标准音响结构'}
+ return {specs,analyze,triad,voiceMotion,roman,acoustic};
+})();
+// Explicit voice identity is required. Never feed sorted realtime notes into
+// strict SATB checks without the learner confirming the assignment.
+const VoiceLeading=(()=>{
+ const voices=['B','T','A','S'],names={B:'低音',T:'次中音',A:'女低音',S:'女高音'};
+ const ranges={B:[40,60],T:[48,67],A:[55,74],S:[60,81]};
+ function validate(frame){return frame&&voices.every(v=>Number.isInteger(frame[v])&&frame[v]>=0&&frame[v]<=127)}
+ function check(before,after,key,options={}){
+ const issues=[];if(!validate(after)||before&&!validate(before))return [{category:'unavailable',rule:'voice-identity',voices:[],notes:[],reason:'需要明确指定 B/T/A/S 的 MIDI 音高，不能由音区排序替代声部身份。',suggestion:'先确认四个声部，再检查连接。'}];
+ const add=(category,rule,vs,reason,suggestion)=>issues.push({category,rule,voices:vs,notes:vs.map(v=>after[v]),reason,suggestion});
+ for(let i=0;i<3;i++)if(after[voices[i]]>after[voices[i+1]])add('A','crossing',[voices[i],voices[i+1]],names[voices[i]]+'高于'+names[voices[i+1]],'交换或调整配音，保持 B ≤ T ≤ A ≤ S。');
+ for(const v of voices)if(after[v]<ranges[v][0]||after[v]>ranges[v][1])add('B','range',[v],names[v]+'超出当前练习建议音域 '+ranges[v].join('–'),'调整八度；音域是可配置教学惯例，不是普遍禁令。');
+ for(const pair of [['T','A'],['A','S']])if(after[pair[1]]-after[pair[0]]>12)add('A','upper-spacing',pair,'相邻上方声部间距超过八度','在当前严格四部练习中，缩小次中音—女低音或女低音—女高音间距。');
+ if(!before)return issues;
+ for(let i=0;i<4;i++)for(let j=i+1;j<4;j++){
+ const low=voices[i],high=voices[j],a=pc(before[high]-before[low]),b=pc(after[high]-after[low]);
+ const dl=after[low]-before[low],dh=after[high]-before[high];
+ if(dl&&dh&&Math.sign(dl)===Math.sign(dh)&&a===b&&(a===7||a===0))add('A',a===7?'parallel-fifths':'parallel-octaves',[low,high],names[low]+'与'+names[high]+'同向形成连续'+(a===7?'纯五度':'纯八度／同度'),'改变一个声部方向，或重配目标和弦；重新检查其他声部。');
+ }
+ const db=after.B-before.B,ds=after.S-before.S;
+ if(db&&ds&&Math.sign(db)===Math.sign(ds)&&Math.abs(ds)>2&&[0,7].includes(pc(after.S-after.B)))add('B','direct-perfect',['B','S'],'外声部同向到纯五度／八度，女高音跳进','尝试女高音级进或反向连接；其处理依风格和练习规范而异。');
+ for(let i=0;i<3;i++){const l=voices[i],h=voices[i+1];if(after[l]>before[h]||after[h]<before[l])add('B','overlap',[l,h],'相邻声部越过前一和弦的音区','调整目标声部音区；声部超越与同一时刻交叉应区分。');}
+ if(key){const root=pc(key.tonic+7),p=voices.map(v=>pc(before[v])),q=voices.map(v=>pc(after[v]));
+ const dominant=[0,4,7].every(i=>p.includes(pc(root+i))),toTonic=q.includes(key.tonic)&&q.includes(pc(key.tonic+7))&&(q.includes(pc(key.tonic+3))||q.includes(pc(key.tonic+4)));
+ // Only a resolved dominant-to-tonic context activates these tendencies.
+ // Inner-voice frustrated leading tones are reported as B unless the exercise
+ // explicitly requires every leading tone to resolve upward.
+ if(dominant&&toTonic)for(const v of voices){
+ if(pc(before[v])===pc(key.tonic+11)&&after[v]!==before[v]+1){const strict=options.strictLeadingTone||v==='S'||v==='B';add(strict?'A':'B','leading-tone',[v],names[v]+'中的属和弦导音未上行半音至主音',strict?'在此严格练习中，将该声部导音上行半音。':'内声部可存在受挫导音；检查配音及练习要求，不直接判为绝对错误。');}
+ if(p.includes(pc(root+10))&&pc(before[v])===pc(root+10)&&![1,2].includes(before[v]-after[v]))add('A','seventh-resolution',[v],names[v]+'中的属七和弦七音未下行级进','使该声部七音下行级进；装饰、延迟解决与特殊例外需另行分析。');
+ }}
+ if(!issues.length)issues.push({category:'C',rule:'checked-connection',voices:[],notes:[],reason:'未发现当前已启用规则的违例；此连接可作为探索方案。',suggestion:'这不代表所有古典规范均已验证；继续比较功能、节奏和旋律效果。'});
+ return issues;
+ }
+ return {voices,names,ranges,validate,check};
+})();
+
+const ContextHarmony=(()=>{
+ let frames=[],findings=[];
+ function inspect(sequence){const out=[];if(sequence.length<2)return out;const b=sequence.at(-1),a=sequence.at(-2),k=b.key;if(!k)return out;
+ const bt=Classical.triad(b.notes,k),at=Classical.triad(a.notes,k),ap=[...new Set(a.notes.map(pc))];
+ const dominant=f=>{const p=[...new Set(f.notes.map(pc))],r=pc(k.tonic+7);return [0,4,7].every(i=>p.includes(pc(r+i)))&&p.every(x=>[0,4,7,10,2,1,3,6,8].map(i=>pc(r+i)).includes(x))};
+ const motion=Classical.voiceMotion(a.notes,b.notes),bassA=pc(Math.min(...a.notes)),bassB=pc(Math.min(...b.notes));
+ const add=(name,confidence,reason)=>out.push({name,confidence,reason});
+ if(dominant(a)&&bt?.root===k.tonic){add('正格终止候选',.83,'V → '+(k.mode==='minor'?'i':'I')+'；无节拍与乐句边界，尚不能确认终止位置');if(k.mode==='minor'&&bt.quality==='maj')add('皮卡第终止候选',.91,'小调属和声解决到大三主和弦')}
+ if(dominant(b))add('半终止候选',.5,'到达 V；需乐句停顿确认');
+ if(dominant(a)&&bt?.root===pc(k.tonic+(k.mode==='minor'?8:9)))add('欺骗终止候选',.86,'V → '+(k.mode==='minor'?'VI':'vi'));
+ if(k.mode==='minor'&&at?.root===pc(k.tonic+5)&&at.quality==='min'&&bassA===pc(k.tonic+8)&&dominant(b)&&bassB===pc(k.tonic+7))add('弗里几亚半终止候选',.9,'iv6 → V，低音 ♭6 → 5');
+ const tonic64=at?.root===k.tonic&&bassA===pc(k.tonic+7);
+ if(tonic64&&dominant(b)&&bassA===bassB){const resolved=motion?.some(v=>pc(v.from-k.tonic)===0&&v.delta===-1)&&motion?.some(v=>pc(v.from-k.tonic)===(k.mode==='minor'?3:4)&&v.delta===(k.mode==='minor'?-1:-2));add('终止四六和弦 K64 / '+(k.mode==='minor'?'i64':'I64'),resolved?.93:.78,'前一主四六在属低音上解决到 V'+(resolved?'，6–5 / 4–3 声部解决支持':'；声部数量变化或配音不足，解决未完全验证'))}
+ const prior=Classical.analyze(a.notes,k,{previous:sequence.at(-3),next:b});for(const c of prior){if(c.confidence>=.85&&c.id!=='diatonic')add(c.label+' 解决得到支持',c.confidence,c.resolution)}
+ if(a.key&&(a.key.tonic!==k.tonic||a.key.mode!==k.mode)){
+ const isDim=ap.length===4&&ap.some(r=>[0,3,6,9].every(i=>ap.includes(pc(r+i))));
+ if(isDim&&bt&&ap.includes(pc(bt.root+11)))add('等音减七转调候选',.78,'调性已改变，前一减七可重释为新调导七；MIDI 无拼写，需人工确认');
+ const oldAug=Classical.analyze(a.notes,a.key).some(c=>/^(It|Fr|Ger|Sw)\+6$/.test(c.id));
+ const newRead=Classical.analyze(a.notes,k,{next:b});if(oldAug&&newRead.some(c=>/^(V\/|altered|diatonic)/.test(c.id)&&c.confidence>=.8)&&bt?.root===k.tonic)add('等音增六转调候选',.78,'旧调增六音响在新调重释为属和声并解决；需拼写确认')}
+ return out;
+ }
+ function accept(notes,key){frames.push({notes:[...notes],key:key?{...key}:null});if(frames.length>12)frames.shift();findings=inspect(frames)}
+ return {accept,inspect,get frames(){return frames},get findings(){return findings},reset(){frames=[];findings=[]}};
+})();
+
+// Popular chord symbols describe sonority, not proof of a tonal function.
+// A slash followed by a note is an inversion; a slash followed by a chord
+// (e.g. G/Bbdim) describes two complete triads, upper chord first.
+const PopHarmony=(()=>{
+ const extended=[['dom11','属十一（省略三音）',[0,7,10,2,5]],['dom11','属十一（省略三、五音）',[0,10,2,5]],['dom9add11','属九加十一',[0,4,7,10,2,5]],['min11','小十一',[0,3,7,10,2,5]],['maj11','大七加九、十一',[0,4,7,11,2,5]],['dom13','属十三',[0,4,7,10,2,9]],['dom13','属十三（省略五、九音）',[0,4,10,9]],['dom13add11','属十三加十一',[0,4,7,10,2,5,9]],['maj13','大十三',[0,4,7,11,2,9]],['min13','小十三',[0,3,7,10,2,5,9]]].map(([id,name,intervals])=>({id,name,intervals}));
+ const suffix={dom11:'11',dom9add11:'9(add11)',min11:'m11',maj11:'maj9(add11)',dom13:'13',dom13add11:'13(add11)',maj13:'maj13',min13:'m13',maj:'',min:'m',dim:'dim',aug:'aug',maj7:'maj7',min7:'m7',dom7:'7',half:'m7b5',dim7:'dim7',maj9:'maj9',min9:'m9',dom9:'9',sus4:'sus4',sus2:'sus2',six:'6',min6:'m6'};
+ const names=['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+ const note=(n,map)=>map?.[pc(n)]?.replaceAll('♭','b').replaceAll('♯','#')||names[pc(n)];
+ function matches(pitches,triadsOnly=false){const result=[];for(let root=0;root<12;root++)for(const t of [...Templates,...extended]){if(triadsOnly&&!['maj','min','dim','aug'].includes(t.id))continue;const tones=t.intervals.map(i=>pc(root+i));if(tones.length===pitches.length&&tones.every(n=>pitches.includes(n)))result.push({root,type:t,tones})}return result}
+ function symbol(c,bass,map){return note(c.root,map)+suffix[c.type.id]+(bass!=null&&bass!==c.root?'/'+note(bass,map):'')}
+ function analyze(notes,key,map={}){
+ const pitches=[...new Set(notes.map(pc))],bass=notes.length?pc(Math.min(...notes)):null;if(pitches.length<3)return {text:'',exact:false};
+ const full=matches(pitches).sort((a,b)=>(key&&Harmony.base(b,key)?2:0)+(b.root===bass?1:0)-((key&&Harmony.base(a,key)?2:0)+(a.root===bass?1:0)));
+ if(full.length)return {text:symbol(full[0],bass,map),exact:true,kind:'chord'};
+ if(pitches.length===6){const ordered=[...new Set([...notes].sort((a,b)=>a-b).map(pc))];let best=null;
+ for(let i=0;i<4;i++)for(let j=i+1;j<5;j++)for(let k=j+1;k<6;k++){
+ const lower=[ordered[i],ordered[j],ordered[k]],upper=ordered.filter(n=>!lower.includes(n));
+ for(const l of matches(lower,true))for(const u of matches(upper,true)){
+ const naturalRegister=lower.every(n=>ordered.indexOf(n)<3),score=(naturalRegister?8:0)+(l.root===bass?3:0)+(u.type.id==='maj'?2:0)+(l.type.id==='dim'?1:0);
+ if(!best||score>best.score)best={score,text:symbol(u,null,map)+'/'+symbol(l,null,map)}}}
+ if(best)return {text:best.text,exact:true,kind:'polychord'};
+ }
+ const c=ChordRecognition.basic(notes,key,null);return c?{text:symbol(c,bass,map)+(c.outside.length?' + '+c.outside.map(n=>note(n,map)).join(', '):''),exact:false,kind:'partial'}:{text:pitches.map(n=>note(n,map)).join('–'),exact:false,kind:'notes'};
+ }
+ // A partial match or low-evidence context candidate must not monopolize the
+ // headline. Secondary/special analysis remains inspectable in details.
+ function useFunctional(candidates,c){return !!(c&&!c.outside.length&&candidates[0]?.confidence>=.65&&!['CT°7','CT+6','K64'].includes(candidates[0]?.id))}
+ return {analyze,useFunctional};
+})();
+
+const Tonality=(()=>{
+ const keys=Array.from({length:24},(_,i)=>({tonic:i%12,mode:i<12?'major':'minor'}));let window=[],current=null,challenger='',streak=0,ranking=[];
+ const same=(a,b)=>a&&b&&a.tonic===b.tonic&&a.mode===b.mode;
+ function score(k){let total=0;window.forEach((c,i)=>{let f=Harmony.base(c,k);const special=Classical.analyze(c.tones,k).some(x=>x.confidence>=.65&&x.id!=='diatonic');total+=f?3:special?1:-2;if(c.root===k.tonic&&f?.startsWith('T'))total+=1;
+ const prev=window[i-1];if(prev&&pc(prev.root-k.tonic)===7&&Harmony.base(prev,k)?.startsWith('D')&&c.root===k.tonic&&f==='T')total+=7;
+ if(prev&&['S','SII','II7','N'].includes(Harmony.base(prev,k))&&f?.startsWith('D'))total+=2});return total}
+ function accept(c){window.push(c);if(window.length>5)window.shift();ranking=keys.map(key=>({key,score:score(key)})).sort((a,b)=>b.score-a.score);
+ const best=ranking[0],margin=best.score-ranking[1].score;
+ if(window.length>=2&&best.score>=8&&margin>=3){if(!current)current=best.key;else if(!same(current,best.key)&&best.score-score(current)>=4){const id=keyName(best.key);streak=challenger===id?streak+1:1;challenger=id;
+ // A common chord in the window is a pivot; direct modulations remain pending.
+ const pivot=window.some(x=>(Harmony.base(x,current)||Classical.analyze(x.tones,current).length)&&(Harmony.base(x,best.key)||Classical.analyze(x.tones,best.key).length));if(streak>=2&&pivot){current=best.key;streak=0}}
+ else{streak=0;challenger=''}}else{streak=0;challenger=''}return current}
+ return {keys,accept,get current(){return current},get ranking(){return ranking},reset(){window=[];current=null;challenger='';streak=0;ranking=[]}};
+})();
+const NonChord=(()=>{
+ let memory=new Map(),previousTones=[],previousNotes=[],resolved=[];
+ function reset(){memory.clear();previousTones=[];previousNotes=[];resolved=[]}
+ function analyze(c,notes,time){if(!c)return [];const result=[];
+ // Delayed classification: only infer a stepwise motion when the observed
+ // note sets differ by one voice; otherwise avoid inventing voice identity.
+ const removed=previousNotes.filter(n=>!notes.includes(n)),added=notes.filter(n=>!previousNotes.includes(n));
+ for(const [n,m] of memory){if(!notes.includes(n)){
+ let kind=m.kind;
+ if(removed.length===1&&added.length===1&&Math.abs(added[0]-n)<=2){const target=added[0];if(m.before===target)kind='辅助音';else if(m.before!=null&&Math.abs(m.before-n)<=2&&Math.sign(n-m.before)===Math.sign(target-n))kind='经过音';else if(m.suspended)kind='留音';else kind='倚音（可能）'}
+ else if(c.tones.includes(pc(n)))kind='先现音（可能）';
+ if(kind!=='待判定')resolved.push({text:NAMES[pc(n)]+'：'+kind+'（已解决）',until:time+2500});memory.delete(n)}}
+ for(const n of notes.filter(n=>c.outside.includes(pc(n)))){let m=memory.get(n);if(!m){m={since:time,before:removed.length===1&&added.length===1?removed[0]:null,suspended:previousTones.includes(pc(n)),kind:'待判定',chords:0,lastRoot:c.root};memory.set(n,m)}
+ if(m.lastRoot!==c.root){m.chords++;m.lastRoot=c.root}if(m.chords>=2&&time-m.since>500)m.kind='持续音（可能）';else if(m.suspended)m.kind='留音（待解决）';result.push(NAMES[pc(n)]+'：'+m.kind)}
+ resolved=resolved.filter(r=>r.until>time);previousTones=c.tones;previousNotes=[...notes];return [...new Set(result)].concat(resolved.map(r=>r.text))}
+ return {analyze,reset};
+})();
+const MIDIInput=(()=>{
+ let access=null,selected='*';try{selected=localStorage.getItem('phychord-midi-device')||'*'}catch{}const held=new Map();let timer=null;
+ function allNotes(midiOnly=false){return [...new Set([...held.entries()].filter(([id])=>!midiOnly||!id.startsWith('demo:')).map(([,n])=>n))]}
+ function event(type,note,velocity=0,channel=0,source='demo',time=performance.now()){
+ if(source==='demo'&&State.mode==='play'&&type==='noteon')return;
+ const id=source+':'+channel+':'+note;if(type==='noteon'&&velocity>0)held.set(id,note);else held.delete(id);
+ State.notes=allNotes();if(typeof window!=='undefined'&&source!=='demo'&&!State.resetting)ScoreEditor.midi(type,note,velocity,source+':'+channel,allNotes(true));State.lastChange=performance.now();UI.schedule();
+ // Debounce only the harmonic history (120 ms); visible chord updates on RAF.
+ // This avoids treating sequential note-on arrival as several separate harmonies.
+ clearTimeout(timer);timer=setTimeout(()=>{Analysis.commit();UI.schedule()},120)}
+ function message(e,source){const [s,n,v=0]=e.data,kind=s&240,ch=s&15;if(kind===144)event(v?'noteon':'noteoff',n,v,ch,source,e.timeStamp);else if(kind===128)event('noteoff',n,v,ch,source,e.timeStamp);else if(kind===176&&(n===120||n===123)){for(const id of [...held.keys()])if(id.startsWith(source+':'+ch+':'))event('noteoff',held.get(id),0,ch,source,e.timeStamp)}}
+ function bind(){let count=0;const select=document.getElementById('midiDevice');select.replaceChildren();const all=document.createElement('option');all.value='*';all.textContent='所有 MIDI 输入';select.append(all);let present=false;for(const input of access.inputs.values()){input.onmidimessage=e=>{if(selected==='*'||selected===input.id)message(e,input.id)};if(input.state!=='connected')continue;const o=document.createElement('option');o.value=input.id;o.textContent=input.name||'未命名 MIDI 设备';select.append(o);if(input.id===selected)present=true;if(selected==='*'||selected===input.id)count++}if(selected!=='*'&&!present){const o=document.createElement('option');o.value=selected;o.textContent='所选 MIDI 设备已断开';select.append(o)}select.value=selected;const status=count?'已连接 '+count+' 个本地 MIDI 输入':'等待所选 MIDI 设备连接';document.querySelector('#status').textContent=status;document.getElementById('midiSettingsStatus').textContent=status}
+ function select(id){State.resetting=true;for(const key of [...held.keys()])if(!key.startsWith('demo:'))held.delete(key);State.notes=allNotes();State.resetting=false;selected=id;try{localStorage.setItem('phychord-midi-device',id)}catch{}ScoreEditor.cancelPending();if(access)bind();UI.schedule()}
+
+ async function connect(){try{if(!navigator.requestMIDIAccess)throw Error('此浏览器不支持 Web MIDI');access=await navigator.requestMIDIAccess({sysex:false});bind();access.onstatechange=e=>{if(e.port.type==='input'&&e.port.state==='disconnected'){for(const id of [...held.keys()])if(id.startsWith(e.port.id+':')){const parts=id.split(':');event('noteoff',held.get(id),0,Number(parts[parts.length-2]),e.port.id)}}bind()}}catch(e){document.querySelector('#status').textContent='';document.getElementById('midiSettingsStatus').textContent=''}}
+ function clear(){State.resetting=true;clearTimeout(timer);for(const id of [...held.keys()]){const parts=id.split(':'),note=held.get(id);event('noteoff',note,0,Number(parts[parts.length-2]),parts.slice(0,-2).join(':'))}clearTimeout(timer);held.clear();State.notes=[];State.resetting=false;UI.schedule()}
+ return {event,connect,clear,select};
+})();
+const Analysis={
+ context(){return {cadential:false}}, // K64 requires a subsequent V; ContextHarmony confirms retrospectively.
+ commit(){const key=State.mode==='chord'?State.selected:Tonality.current;const c=ChordRecognition.recognize(State.notes,key,State.chord);if(!c){if(State.notes.length===0)State.lastSignature='';return}
+ const sig=[...State.notes].sort((a,b)=>a-b).join(',');if(sig===State.lastSignature)return;State.lastSignature=sig;State.previous=State.chord;State.chord=c;
+ if(State.mode==='play')Tonality.accept(c);ContextHarmony.accept(State.notes,State.mode==='chord'?State.selected:Tonality.current);State.history.push(NAMES[c.root]+c.type.name);if(State.history.length>5)State.history.shift()},
+ reset(){MIDIInput.clear();Tonality.reset();NonChord.reset();ContextHarmony.reset();State.chord=null;State.previous=null;State.lastSignature='';State.history=[];UI.schedule()}
+};
+// Notation preserves written pitch separately from MIDI. SVG renders a minimal
+// grand staff; editing focuses on harmonic events, not general-purpose engraving.
+// Bravura glyph outlines (SIL OFL 1.1), Steinberg Media Technologies.
+const MusicGlyphs={"treble":{"path":"M376 415C374 427 376 428 382 434C398 449 419 470 438 491C522 583 572 702 572 815C572 902 548 988 507 1048C492 1070 466 1098 455 1098C441 1098 410 1072 390 1050C316 968 292 843 292 739C292 681 299 616 306 575C308 563 309 561 297 551C233 498 164 437 112 373C43 287 0 194 0 87C0 -87 119 -252 364 -252C387 -252 413 -250 433 -246C444 -244 446 -243 448 -255C460 -322 475 -409 475 -456C475 -604 375 -622 316 -622C262 -622 236 -606 236 -593C236 -586 245 -583 268 -576C299 -567 335 -540 335 -482C335 -427 300 -380 239 -380C172 -380 132 -433 132 -495C132 -560 171 -658 322 -658C389 -658 519 -628 519 -458C519 -401 501 -306 490 -244C488 -232 489 -233 503 -227C604 -187 671 -102 671 11C671 139 577 252 430 252C404 252 404 252 401 270ZM470 943C503 943 530 916 530 861C530 792 497 728 419 650C403 634 379 611 356 591C349 585 345 586 343 599C339 625 337 659 337 691C337 847 409 943 470 943ZM361 262C364 243 364 244 346 238C258 208 201 129 201 44C201 -46 248 -110 316 -133C324 -136 336 -139 343 -139C351 -139 355 -134 355 -128C355 -121 347 -118 340 -115C298 -97 268 -54 268 -8C268 49 307 92 368 109C384 113 386 112 388 101L438 -197C440 -208 439 -208 424 -211C408 -214 388 -216 368 -216C193 -216 80 -119 80 20C80 79 90 158 173 252C233 319 279 356 326 394C336 402 338 401 340 390ZM430 103C428 115 429 118 441 117C522 110 589 42 589 -46C589 -109 551 -160 495 -188C483 -194 481 -194 479 -182Z","bounds":[0,-658,671,1098]},"bass":{"path":"M252 262C78 262 0 135 0 39C0 -41 42 -110 123 -110C186 -110 229 -66 229 -4C229 60 182 100 133 100C106 100 96 93 83 93C70 93 67 101 67 111C67 151 127 224 229 224C335 224 381 120 381 -37C381 -140 359 -260 297 -356C237 -449 134 -534 10 -605C1 -610 -5 -615 -5 -623C-5 -629 -1 -635 8 -635C13 -635 19 -633 25 -630C158 -565 286 -489 392 -375C479 -281 531 -159 531 -28C531 146 425 262 252 262ZM629 180C598 180 574 156 574 125C574 94 598 70 629 70C660 70 684 94 684 125C684 156 660 180 629 180ZM630 -71C599 -71 576 -94 576 -125C576 -156 599 -179 630 -179C661 -179 684 -156 684 -125C684 -94 661 -71 630 -71Z","bounds":[-5,-635,684,262]},"brace":{"path":"M0 500C24 463 37 435 37 397C37 330 2 251 2 175C2 121 20 48 61 1C64 -3 71 1 69 6C45 45 37 91 37 131C37 212 69 285 69 354C69 404 56 452 16 500C55 547 69 595 69 645C69 714 37 788 37 868C37 909 44 954 68 993C71 999 63 1003 60 999C19 951 2 879 2 824C2 748 37 669 37 602C37 564 24 537 0 500Z","bounds":[0,-0.6326530612244898,69.35373866023978,1000.6101229340817]},"whole":{"path":"M216 125C83 125 0 70 0 2C0 -65 57 -125 206 -125C370 -125 422 -68 422 2C422 73 309 125 216 125ZM111 63C122 98 159 103 190 103C259 103 314 29 314 -31C314 -38 313 -44 312 -50C307 -75 293 -92 268 -98C258 -101 247 -102 237 -102C228 -102 220 -101 211 -98C194 -93 178 -84 164 -72C156 -65 149 -58 143 -50C123 -27 108 7 108 39C108 47 109 55 111 63Z","bounds":[0,-125,422,125]}};
+const Notation=(()=>{
+ const letters='CDEFGAB',naturals=[0,2,4,5,7,9,11];
+ function parse(text){const m=/^([A-Ga-g])([#b♯♭]{0,2})(-?\d)$/.exec(text.trim());if(!m)throw Error('音符需包含八度，例如 C3 G3 C4 E4 或 D♭4。');const letter=m[1].toUpperCase(),alter=[...m[2]].reduce((a,c)=>a+(c==='#'||c==='♯'?1:-1),0),octave=Number(m[3]),midi=12*(octave+1)+naturals[letters.indexOf(letter)]+alter;if(midi<0||midi>127)throw Error('音符超出 MIDI 音域。');return {midi,letter,alter,octave}}
+ function fromMidi(midi,spelling={}){const name=spelling[pc(midi)]||NAMES[pc(midi)],m=/^([A-G])([#b♯♭]*)$/.exec(name);const alter=[...m[2]].reduce((a,c)=>a+(c==='#'||c==='♯'?1:-1),0);return {midi,letter:m[1],alter,octave:Math.floor((midi-alter)/12)-1}}
+ function name(n){return n.letter+(n.alter>0?'♯'.repeat(n.alter):'♭'.repeat(-n.alter))+n.octave}
+ function position(n,clef){const absolute=n.octave*7+letters.indexOf(n.letter),bottom=clef==='treble'?4*7+2:2*7+4;return (clef==='treble'?76:168)-(absolute-bottom)*5}
+ function at(y,clef,key){const bottom=clef==='treble'?4*7+2:2*7+4,diatonic=bottom+Math.round(((clef==='treble'?76:168)-y)/5),octave=Math.floor(diatonic/7),li=((diatonic%7)+7)%7;let midi=(octave+1)*12+naturals[li];const map=Spelling.auto(key),expected=Object.values(map).find(s=>s[0]===letters[li]);let alter=0;if(expected)alter=[...expected.slice(1)].reduce((a,c)=>a+(c==='♯'?1:-1),0);return {letter:letters[li],alter,octave,midi:midi+alter}}
+ function compactFunction(label){return (label||'').replace('（自然音级）','ⁿ').replace('（自然小调）','ⁿ')}
+ function grandStaffLayout(){const staffLeft=26,top=36,bottom=168,lineWidth=1,braceGap=2,scaleX=.2,[xMin,yMin,xMax,yMax]=MusicGlyphs.brace.bounds,scaleY=(bottom-top)/(yMax-yMin),right=staffLeft-lineWidth/2-braceGap;return {staffLeft,top,bottom,lineWidth,braceGap,braceX:right-xMax*scaleX,braceY:bottom+yMin*scaleY,scaleX,scaleY,right,left:right-(xMax-xMin)*scaleX}}
+ function svg(events,{width=700,live=false,labels=[],selected=-1,key=null,cursor=-1,columns=0,step=100,left=110,annotations=null}={}){
+ if(live){const ys=events.flatMap(e=>e.notes.map(n=>position(n,n.midi>=60?'treble':'bass')));width=Math.max(width,(Math.max(214,...ys.map(y=>y+12))-Math.min(0,...ys.map(y=>y-12)))*1.25)}
+ const layout=grandStaffLayout();
+ const cols=columns||Math.max(1,events.length+(cursor>=events.length?1:0)),systems=columns?Math.max(1,Math.ceil(Math.max(events.length,cursor+1)/cols)):1;
+ const ys=events.flatMap(e=>e.notes.map(n=>position(n,n.midi>=60?'treble':'bass'))),minimum=Math.min(0,...ys.map(y=>y-12)),annotationY=Math.max(205,...ys.map(y=>y+24)),bottomY=annotations?annotationY+76:214,origin=columns?-minimum:0,rowHeight=Math.max(235,Math.max(bottomY,...ys.map(y=>y+12))-minimum+20),top=columns?0:live?minimum-(width*4/5-(Math.max(214,...ys.map(y=>y+12))-minimum))/2:minimum,height=columns?Math.max(1123,systems*rowHeight):live?width*4/5:Math.max(bottomY,...ys.map(y=>y+12))-top;
+ let out=`<svg xmlns="http://www.w3.org/2000/svg" data-system-height="${rowHeight}" data-origin-y="${origin}" viewBox="0 ${top} ${width} ${height}" role="img" aria-label="高低音双谱表" class="staff-svg">`;
+ const baseline=key?Spelling.auto(key):{},accidentals={};
+ for(let system=0;system<systems;system++){const dy=system*rowHeight+origin;out+=`<g transform="translate(0 ${dy})">`;
+ for(const bottom of [76,168])for(let i=0;i<5;i++)out+=`<line x1="${layout.staffLeft}" y1="${bottom-i*10}" x2="${width-12}" y2="${bottom-i*10}" stroke="currentColor" stroke-width=".75"/>`;
+ // Vector clefs, no external music fonts; hollow whole notes have no stems.
+ out+=`<path class="grand-brace" d="${MusicGlyphs.brace.path}" transform="translate(${layout.braceX} ${layout.braceY}) scale(${layout.scaleX} ${-layout.scaleY})" fill="currentColor"/><line class="staff-connector" x1="${layout.staffLeft}" y1="${layout.top}" x2="${layout.staffLeft}" y2="${layout.bottom}" stroke="currentColor" stroke-width="${layout.lineWidth}"/><path class="treble-clef" d="${MusicGlyphs.treble.path}" transform="translate(38 66) scale(.04 -.04)" fill="currentColor"/><path class="bass-clef" d="${MusicGlyphs.bass.path}" transform="translate(39 138) scale(.04 -.04)" fill="currentColor"/>`;
+ // Key signature represented on each system. Accidentals persist across the
+ // unbarred harmony line per letter+octave; naturals only cancel an alteration.
+ const signature=Object.values(baseline).filter(n=>n.length>1),order=signature.some(n=>n.includes('♭'))?'BEADGCF':'FCGDAEB';signature.sort((a,b)=>order.indexOf(a[0])-order.indexOf(b[0]));
+ for(const [j,name] of signature.entries()){
+ for(const clef of ['treble','bass']){const lower=order==='FCGDAEB'?'AB':'BAGF',octave=(clef==='treble'?5:3)-(lower.includes(name[0])?1:0),n=fromMidi((octave+1)*12+naturals[letters.indexOf(name[0])]+(name.includes('♯')?1:-1),{[Spelling.pitch(name)]:name});out+=`<text fill="currentColor" x="${70+j*5}" y="${position(n,clef)+5}" font-size="15">${name.slice(1)}</text>`}}
+ if(annotations&&system===0&&key){const label=PivotHarmony.keyLabel(key);out+=`<g class="key-box initial-key" data-key="${label}"><rect x="36" y="${annotationY-14}" width="34" height="29" fill="none" stroke="currentColor"/><text fill="currentColor" x="53" y="${annotationY+7}" text-anchor="middle" font-family="serif" font-size="22">${label}</text></g>`}
+ out+='</g>';
+ }
+ events.forEach((event,i)=>{const system=columns?Math.floor(i/cols):0,dy=system*rowHeight+origin,x=live?width/2:left+(i%cols)*step;out+=`<g data-event="${i}" transform="translate(0 ${dy})">`;
+ const occupied=[];event.notes.forEach((n,j)=>{const clef=n.midi>=60?'treble':'bass',y=position(n,clef),bottom=clef==='treble'?76:168,upper=bottom-40;
+ const previousHead=occupied.filter(o=>o.clef===clef).at(-1),adjacent=previousHead&&Math.abs(previousHead.y-y)<=5&&!previousHead.shifted,nx=x+(adjacent?13:0);occupied.push({clef,y,shifted:!!adjacent});
+ for(let ly=bottom+10;ly<=y;ly+=10)out+=`<line x1="${nx-14}" y1="${ly}" x2="${nx+14}" y2="${ly}" stroke="currentColor"/>`;
+ for(let ly=upper-10;ly>=y;ly-=10)out+=`<line x1="${nx-14}" y1="${ly}" x2="${nx+14}" y2="${ly}" stroke="currentColor"/>`;
+ const id=n.letter+n.octave,baseName=Object.values(baseline).find(s=>s[0]===n.letter)||n.letter,baseAlter=[...baseName.slice(1)].reduce((a,c)=>a+(c==='♯'?1:-1),0),previous=accidentals[id]??baseAlter;
+ if(n.alter!==previous){const accidental=n.alter>0?'♯'.repeat(n.alter):n.alter<0?'♭'.repeat(-n.alter):'♮';out+=`<text fill="currentColor" class="accidental" x="${nx-23-j%2*9}" y="${y+5}" font-size="18">${accidental}</text>`}accidentals[id]=n.alter;
+ out+=`<g data-midi="${n.midi}" data-note="${j}" class="notehead"><rect x="${nx-11}" y="${y-7}" width="22" height="14" fill="transparent" pointer-events="all"/><ellipse cx="${nx}" cy="${y}" rx="10.2" ry="6.1" fill="var(--page, #fff)"/><path d="${MusicGlyphs.whole.path}" transform="translate(${nx-10.128} ${y}) scale(.048 -.048)" fill="currentColor" fill-rule="nonzero"/></g>`;
+
+ });
+ const annotation=annotations?.[i];if(annotation){
+ if(annotation.pivot){const p=annotation.pivot;out+=`<g class="pivot-functions"><text fill="currentColor" x="${x}" y="${annotationY-3}" text-anchor="middle" font-size="16">${compactFunction(p.old.function)}</text><text fill="currentColor" x="${x}" y="${annotationY+16}" text-anchor="middle" font-size="16">${compactFunction(p.fresh.function)}</text><path class="pivot-bracket" d="M${x+26} ${annotationY-15} H${x+34} V${annotationY+19} H${x+26}" fill="none" stroke="currentColor" stroke-width="1.2"/></g>`}
+ else if(annotation.function)out+=`<text class="function-label" fill="currentColor" x="${x}" y="${annotationY+7}" text-anchor="middle" font-size="18">${compactFunction(annotation.function)}</text>`;
+ const roman=annotation.pivot?annotation.pivot.old.roman+' / '+annotation.pivot.fresh.roman:annotation.roman;
+ if(roman)out+=`<text class="roman-label" fill="currentColor" x="${x}" y="${annotationY+40}" text-anchor="middle" font-size="13">${roman}</text>`;
+ if(annotation.pop)out+=`<text class="pop-label" fill="currentColor" x="${x}" y="${annotationY+61}" text-anchor="middle" font-size="13">${annotation.pop}</text>`;
+ if(annotation.keyChange){const kx=x-step/2,label=annotation.keyChange.label;out+=`<g class="key-box transition-key" aria-label="转调候选" data-key="${label}" data-transition="${i}"><title>转调候选；无乐句节奏信息，需结合乐曲确认</title><rect x="${kx-16}" y="${annotationY-14}" width="32" height="29" fill="none" stroke="currentColor"/><text fill="currentColor" x="${kx}" y="${annotationY+7}" text-anchor="middle" font-family="serif" font-size="22">${label}</text></g>`}
+ }
+ if(!annotations&&labels[i])out+=`<text fill="currentColor" class="harmony-label" x="${x-25}" y="205" font-size="12">${labels[i]}</text>`;out+='</g>';
+ });
+ if(cursor>=0){const index=cursor>=events.length&&events.length?events.length-1:cursor,hasNotes=!!events[index]?.notes.length,system=columns?Math.floor(index/cols):0,x=left+(index%cols)*step+(hasNotes?30:-26);out+=`<line id="scoreCursor" x1="${x}" x2="${x}" y1="${system*rowHeight+origin+28}" y2="${system*rowHeight+origin+179}" stroke="#48944d" stroke-width="2"/>`}
+ return out+'</svg>';
+ }
+
+ return {parse,fromMidi,name,position,at,svg,grandStaffLayout};
+})();
+// Common-practice diatonic pivot rules, checked against Open Music Theory,
+// Modulation.md (see THEORY_SOURCES.md). Distant keys are not historically
+// impossible; this UI limits double-function pivots to close/parallel keys.
+const PivotHarmony=(()=>{
+ const same=(a,b)=>a.tonic===b.tonic&&a.mode===b.mode;
+ function keyLabel(key){const raw=(key.spelling||Spelling.tonics[key.tonic]).replaceAll('♭','b').replaceAll('♯','#'),letter=key.mode==='minor'?raw[0].toLowerCase():raw[0];return raw.slice(1)+letter}
+ function closeKeys(a,b){if(a.tonic===b.tonic)return true;const relative=k=>pc(k.tonic+(k.mode==='minor'?3:0)),distance=pc(relative(b)-relative(a));return [0,5,7].includes(distance)}
+ function native(event,key){const notes=event.notes.map(n=>n.midi),p=[...new Set(notes.map(pc))];if(p.length<3)return [];
+ const scale=key.mode==='major'?[0,2,4,5,7,9,11]:[0,2,3,5,7,8,10],written=Object.fromEntries(event.notes.map(n=>[pc(n.midi),Notation.name(n).replace(/-?\d+$/,'')])),result=[];
+ for(let root=0;root<12;root++)for(const type of Templates){if(!['maj','min','dim','maj7','min7','dom7','half','dim7'].includes(type.id))continue;if(type.id==='dim7'&&key.mode!=='minor')continue;
+ const tones=type.intervals.map(i=>pc(root+i));if(tones.length!==p.length||!tones.every(n=>p.includes(n)))continue;const c={root,type,bass:pc(Math.min(...notes)),inversion:type.intervals.indexOf(pc(Math.min(...notes)-root)),tones,outside:[]},f=Harmony.base(c,key);if(!f||f==='N')continue;
+ let degree=scale.indexOf(pc(root-key.tonic))+1;if(degree===0&&key.mode==='minor'&&pc(root-key.tonic)===11)degree=7;if(!degree)continue;
+ const expected=Spelling.chord(key,root,degree,type.intervals);if(Object.entries(written).some(([p,name])=>expected[p]&&name!==expected[p]))continue;
+ result.push({chord:c,function:Harmony.label(c,key),roman:Classical.roman(c,key)});
+ }return result;
+ }
+ function arrival(events,start,end,key,oldKey=null){const active=[],matches=[];for(let i=start;i<=end;i++)if(events[i]?.notes.length)active.push(i);
+ for(let j=1;j<active.length;j++){const prev=native(events[active[j-1]],key),now=native(events[active[j]],key);if(prev.some(c=>c.chord.root===pc(key.tonic+7)&&['maj','dom7'].includes(c.chord.type.id))&&now.some(c=>c.chord.root===key.tonic&&c.chord.type.id===(key.mode==='major'?'maj':'min')))matches.push({dominant:active[j-1],tonic:active[j]})}return matches.find(e=>oldKey&&!native(events[e.dominant],oldKey).length)||matches[0]||null;
+ }
+ function detect(events,oldKey,newKey,confirmation,segmentStart=0){if(same(oldKey,newKey))return null;const delta=pc(newKey.tonic-oldKey.tonic);let spelling=newKey.spelling;if(!spelling&&newKey.mode===oldKey.mode&&[5,7].includes(delta))spelling=Spelling.degree(oldKey,delta===7?5:4,delta);if(spelling)newKey={...newKey,spelling};const evidence=arrival(events,segmentStart,confirmation,newKey,oldKey);if(!evidence)return null;
+ let pivot=null;if(closeKeys(oldKey,newKey))for(let i=evidence.dominant;i>segmentStart;i--){if(!events[i]?.notes.length)continue;const old=native(events[i],oldKey),fresh=native(events[i],newKey);const match=old.flatMap(a=>fresh.filter(b=>a.chord.root===b.chord.root&&a.chord.type.id===b.chord.type.id).map(b=>({old:a,fresh:b}))).sort((a,b)=>Number(b.fresh.function.startsWith('S'))-Number(a.fresh.function.startsWith('S')))[0];
+ if(match){pivot={index:i,oldKey:{...oldKey},newKey:{...newKey},old:match.old,fresh:match.fresh};break}}
+ return {from:{...oldKey},to:{...newKey},confirmation,start:pivot?pivot.index:evidence.dominant,pivot,evidence,confidence:'候选（无乐句边界）'};
+ }
+ function annotations(events,rows,initial){const transitions=[];let segmentStart=0,old={...initial};
+ for(let i=0;i<rows.length;i++){if(!rows[i].modulation)continue;const newKey=rows[i].key,transition=detect(events,old,newKey,i,segmentStart);
+ // Even without a common pivot, a key engine change receives only a key box.
+ const t=transition||{from:{...old},to:{...newKey},confirmation:i,start:i,pivot:null,evidence:null,confidence:'候选'};transitions.push(t);old={...t.to};segmentStart=t.start;}
+ let key={...initial};const marks=events.map((event,i)=>{const boundary=transitions.find(t=>t.start===i),pivot=boundary?.pivot;if(boundary)key={...boundary.to};
+ const analyzingKey=pivot?pivot.oldKey:key,notes=event.notes.map(n=>n.midi),written=Object.fromEntries(event.notes.map(n=>[pc(n.midi),Notation.name(n).replace(/-?\d+$/,'')])),nativeChord=native(event,analyzingKey)[0],candidates=Classical.analyze(notes,analyzingKey,{previous:i?{notes:events[i-1].notes.map(n=>n.midi)}:null,next:events[i+1]?{notes:events[i+1].notes.map(n=>n.midi)}:null,spelling:written}),best=candidates[0];
+ const special=best&&best.id!=='diatonic'&&best.confidence>=.65;
+ return {function:nativeChord?.function||(special?best.label:''),roman:nativeChord?.roman||(special?best.roman:''),pop:PopHarmony.analyze(notes,analyzingKey,written).text,key:{...key},pivot,keyChange:boundary?{key:{...boundary.to},label:keyLabel(boundary.to),pivot:!!pivot}:null};});
+ return {marks,transitions};
+ }
+ return {keyLabel,closeKeys,native,arrival,detect,annotations};
+})();
+
+const ScoreAnalysis=(()=>{
+ const same=(a,b)=>a&&b&&a.tonic===b.tonic&&a.mode===b.mode;
+ function run(events,initial){let key={...initial},challenger='',streak=0;const rows=[];
+ for(let i=0;i<events.length;i++){
+ if(!events[i].notes.length){rows.push({key:{...key},notes:[],candidates:[],findings:[],status:'',rank:[]});continue}
+ const window=events.slice(0,i+1).filter(e=>e.notes.length).slice(-5);
+ const rank=Tonality.keys.map(k=>{let score=0;window.forEach((e,j)=>{const ns=e.notes.map(n=>n.midi),cs=Classical.analyze(ns,k),diatonic=cs.find(c=>c.id==='diatonic');score+=diatonic?3:cs.some(c=>c.confidence>=.6)?1:-3;
+ const prior=window[j-1];if(prior){const p=ChordRecognition.basic(prior.notes.map(n=>n.midi),k,null),c=ChordRecognition.basic(ns,k,null);if(p&&c&&pc(p.root-k.tonic)===7&&['maj','dom7'].includes(p.type.id)&&c.root===k.tonic&&c.type.id===(k.mode==='major'?'maj':'min'))score+=7}});return {key:k,score}}).sort((a,b)=>b.score-a.score);
+ const best=rank[0],currentScore=rank.find(x=>same(x.key,key)).score,id=keyName(best.key);let modulation=false;
+ if(window.length>=3&&!same(best.key,key)&&best.score-currentScore>=5&&best.score-rank[1].score>=2){streak=challenger===id?streak+1:1;challenger=id;
+ // Two successive windows and a tonic arrival distinguish established change
+ // from one secondary dominant. This is evidence, not a definitive modulator.
+ const now=Classical.triad(events[i].notes.map(n=>n.midi),best.key),recent=events.slice(Math.max(0,i-1),i+1).some(e=>Classical.triad(e.notes.map(n=>n.midi),best.key)?.root===best.key.tonic);
+ if(streak>=2&&recent){key={...best.key};modulation=true;streak=0}}
+ else if(same(best.key,key)||best.score-currentScore<5){streak=0;challenger=''}
+ const event=events[i],notes=event.notes.map(n=>n.midi),spell=Object.fromEntries(event.notes.map(n=>[pc(n.midi),Notation.name(n).replace(/-?\d+$/,'')]));
+ const priorIndex=events.slice(0,i).findLastIndex(e=>e.notes.length),following=events.slice(i+1).find(e=>e.notes.length),previous=priorIndex>=0?{notes:events[priorIndex].notes.map(n=>n.midi),key:rows[priorIndex].key}:null,next=following?{notes:following.notes.map(n=>n.midi)}:null;
+ const candidates=Classical.analyze(notes,key,{previous,next,spelling:spell});
+ const applied=candidates.find(c=>c.id.includes('/')&&c.id!=='diatonic'&&c.confidence>=.85);
+ const findings=ContextHarmony.inspect([...rows.filter(r=>r.notes.length).slice(-2).map(r=>({notes:r.notes,key:r.key})),{notes,key}]);
+ rows.push({key:{...key},notes,candidates,findings,modulation,status:modulation?'转调候选：'+keyName(key):applied?'临时主音化 / 离调候选：'+applied.roman:'',rank:rank.slice(0,3)});
+ }return rows;
+ }
+ return {run};
+})();
+const Recommendation=(()=>{
+ const frame=event=>event?.voices?Object.fromEntries(VoiceLeading.voices.map((v,i)=>[v,event.notes[i].midi])):null;
+ function grammar(key,event,previous,{cadence='continue',beat=0}={}){
+ const c=ChordRecognition.basic(event.notes.map(n=>n.midi),key,null),f=c&&Harmony.base(c,key),t=key.mode==='minor'?3:4;
+ const targets=[];const add=(offset,quality,reason,inversions=[0,1])=>targets.push({root:pc(key.tonic+offset),quality,reason,inversions});
+ const tonic=()=>add(0,key.mode==='minor'?'min':'maj','属到主：完成属功能张力与导音解决。',[0]);
+ const dom=()=>{const origin=f?.startsWith('T')||f==='DTIII'?'主功能进入属功能':'前属进入属功能';add(7,'maj',origin+'：建立或强化属张力，准备导音解决。',[0]);add(7,'dom7',origin+'七和弦：七音在后续连接中下行级进解决。',[0])};
+ const currentCandidates=Classical.analyze(event.notes.map(n=>n.midi),key);
+ if(currentCandidates.some(x=>['N','It+6','Fr+6','Ger+6','Sw+6'].includes(x.id))){dom();if(currentCandidates.some(x=>['Ger+6','Sw+6'].includes(x.id)))add(0,key.mode==='minor'?'min':'maj','德国 / 瑞士增六进入终止四六候选，避免直接到 V 的平行五度；随后需要 V 解决。',[2]);}
+ else if(f?.startsWith('D')&&f!=='DTIII'){tonic();if(cadence==='continue')add(key.mode==='minor'?8:9,key.mode==='minor'?'maj':'min','阻碍连接：属转向 VI / vi，保持共同音并解决导音。',[0]);}
+ else if(cadence==='authentic'){if(c?.root===key.tonic&&c.inversion===2)dom();else dom();}
+ else if(cadence==='half')dom();
+ else if(f?.startsWith('S')||f==='II7'){dom();if(beat!==null&&beat%4===0)add(0,key.mode==='minor'?'min':'maj','前属进入终止四六候选：需下一属和弦及 6–5 / 4–3 解决。',[2]);}
+ else if(f?.startsWith('T')||f==='DTIII'){add(5,key.mode==='minor'?'min':'maj','主功能延伸至下属，保留共同音并进入前属区域。');add(2,key.mode==='minor'?'dim':'min','以 II 级前属准备属和声。',[1]);dom();}
+ else return {targets:[],message:'当前功能不明确；请先确定调性或编辑拼写，避免生成无根据的连接。'};
+ if(previous){const p=ChordRecognition.basic(previous.notes.map(n=>n.midi),key,null);if(p?.root===pc(key.tonic+7)&&c?.root===key.tonic&&c.inversion===2)return {targets:[],message:'当前主四六的用途不明确，请先确认节拍及终止位置。'}}
+ return {targets,message:''};
+ }
+ function generate(events,index,key,options={}){
+ const source=events[index],before=frame(source);if(!before||source.notes.length!==4)return {candidates:[],message:'请将当前和弦设为四声部配音，并按 B/T/A/S 顺序填写四个音；随后生成连接。'};
+ const beat=events.slice(0,index+1).reduce((n,e)=>n+e.beats,0),next=events[index+1],after=frame(next),g=grammar(key,source,events[index-1],{...options,beat:options.rhythmUnknown?null:beat});if(g.message)return {candidates:[],message:g.message};
+ if(next&&!after)return {candidates:[],message:'插入点已有后续和弦；请先确认其四部声部身份，才能检查两个方向的连接。'};
+ const sourceIssues=VoiceLeading.check(null,before,key);if(sourceIssues.some(x=>x.category==='A'||x.rule==='range'))return {candidates:[],message:'当前配音存在交叉、间距或音域问题，请先调整。'};
+ const sourceChord=ChordRecognition.basic(source.notes.map(n=>n.midi),key,null);const results=[];
+ for(const target of g.targets){const ints=target.quality==='maj'?[0,4,7]:target.quality==='min'?[0,3,7]:target.quality==='dim'?[0,3,6]:[0,4,7,10],pitches=ints.map(x=>pc(target.root+x));const lists=VoiceLeading.voices.map(v=>{const [low,high]=VoiceLeading.ranges[v],ns=[];for(let n=low;n<=high;n++)if(pitches.includes(pc(n)))ns.push(n);return ns});let best=null;
+ for(const B of lists[0]){const inv=ints.indexOf(pc(B-target.root));if(!target.inversions.includes(inv))continue;
+ for(const T of lists[1])for(const A of lists[2])for(const S of lists[3]){
+ if(!(B<T&&T<=A&&A<=S)||A-T>12||S-A>12)continue;const ns=[B,T,A,S],unique=[...new Set(ns.map(pc))];const complete=pitches.every(p=>unique.includes(p));const incompleteTonic=sourceChord?.type.id==='dom7'&&target.root===key.tonic&&['maj','min'].includes(target.quality)&&ns.filter(n=>pc(n)===target.root).length===3&&ns.filter(n=>pc(n)===pitches[1]).length===1;if(!complete&&!incompleteTonic)continue;
+ const leading=pc(key.tonic+11);if(ns.filter(n=>pc(n)===leading).length>1)continue;
+ if(target.quality==='dim'&&ns.filter(n=>pc(n)===pc(target.root+3)).length!==2)continue;
+ const f={B,T,A,S},issues=VoiceLeading.check(before,f,key,{strictLeadingTone:true});if(issues.some(x=>x.category!=='C'))continue;
+ if(after&&VoiceLeading.check(f,after,key,{strictLeadingTone:true}).some(x=>x.category!=='C'))continue;
+ // All chord sevenths resolve downward even when the target is not I.
+ const raw=ChordRecognition.basic(source.notes.map(n=>n.midi),key,null);if(raw&&raw.type.intervals.length===4){const seventh=pc(raw.root+raw.type.intervals[3]);if(VoiceLeading.voices.some(v=>pc(before[v])===seventh&&![1,2].includes(before[v]-f[v])))continue;}
+ if(VoiceLeading.voices.some(v=>Math.abs(f[v]-before[v])>(v==='B'?12:7)))continue;
+ const cost=VoiceLeading.voices.reduce((sum,v)=>sum+Math.abs(f[v]-before[v]),0)+(inv===2?3:0);if(!best||cost<best.cost)best={cost,ns,issues};
+ }}
+ if(best){const raw=ChordRecognition.basic(best.ns,key,null)||{root:target.root,type:Templates.find(t=>t.id===target.quality),bass:pc(best.ns[0]),inversion:ints.indexOf(pc(best.ns[0]-target.root))},cs=Classical.analyze(best.ns,key),chosen=cs.find(x=>x.id==='diatonic')||cs[0],spell={...Spelling.auto(key),...(chosen?.spelling||{})},notes=best.ns.map(n=>Notation.fromMidi(n,spell));
+ results.push({event:{notes,beats:options.beats||1,voices:true},roman:raw?Classical.roman(raw,key):'待分析',symbol:PopHarmony.analyze(best.ns,key,spell).text||Spelling.tonics[target.root]+(target.quality==='min'?'m':''),reason:target.reason+([ ...new Set(best.ns.map(pc))].length<3?' 完全属七到主和弦采用省略五音、三倍根音的常见配音。':'')+(after?' 已同时检查到后续和弦的连接。':''),function:raw?Harmony.base(raw,key):'',constraints:'已检查音域、交叉、间距、平行五八度、声部超越、外声部直接纯音程及适用的导音 / 七音解决；未覆盖全部历史风格例外。'})}
+ }
+ return {candidates:results,message:results.length?'':'当前音区及连接限制下未找到方案；可调整旋律、低音或配音后重试。'};
+ }
+ return {frame,grammar,generate};
+})();
+const AudioPreview=(()=>{
+ const beatSeconds=60/52; // Audition tempo only; whole-note engraving remains unmetered.
+ let context=null,nodes=[],generation=0,state='stopped',currentEvent=null,kind=null,frame=null,position=-1,origin=0,sequenceIndices=[];const listeners=new Set(),positionListeners=new Set();
+ function emit(){for(const fn of listeners)fn(state)}
+ function cancelFrame(){if(frame!==null){window.cancelAnimationFrame?.(frame);frame=null}}
+ function trackPosition(){frame=null;if(kind!=='score'||state!=='playing')return;const step=Math.min(sequenceIndices.length-1,Math.floor(Math.max(0,context.currentTime-origin)/beatSeconds)),index=sequenceIndices[step];if(index!==position){position=index;for(const fn of positionListeners)fn(index)}frame=window.requestAnimationFrame?.(trackPosition)??null}
+ function stop(){cancelFrame();position=-1;generation++;for(const n of nodes){try{n.stop()}catch{}}nodes=[];state='stopped';currentEvent=null;kind=null;emit()}
+ async function start(events,sequence){
+  stop();const harmonies=events.filter(e=>e?.notes?.length);if(!harmonies.length)return;
+  const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
+  context=context||new Audio();const token=generation;await context.resume();if(token!==generation)return;
+  currentEvent=sequence?null:harmonies[0];kind=sequence?'score':'preview';
+  origin=context.currentTime;sequenceIndices=events.map((e,i)=>e?.notes?.length?i:-1).filter(i=>i>=0);let remaining=harmonies.reduce((sum,e)=>sum+e.notes.length,0);
+  // Schedule against the audio clock: all notes of each harmony start together, without timer drift.
+  harmonies.forEach((event,index)=>{
+   const time=origin+(sequence?index*beatSeconds:0),duration=sequence?beatSeconds:Math.min(3,(event.beats||4)*.5);
+   for(const note of event.notes){const osc=context.createOscillator(),gain=context.createGain();osc.type='triangle';osc.frequency.value=440*2**((note.midi-69)/12);gain.gain.setValueAtTime(0,time);gain.gain.linearRampToValueAtTime(.12/event.notes.length,time+.02);gain.gain.exponentialRampToValueAtTime(.001,time+duration-.01);osc.connect(gain);gain.connect(context.destination);osc.onended=()=>{osc.disconnect();gain.disconnect();if(token===generation&&--remaining===0){cancelFrame();nodes=[];state='stopped';currentEvent=null;kind=null;emit()}};osc.start(time);osc.stop(time+duration);nodes.push(osc)}
+  });state='playing';emit();if(sequence)trackPosition();
+ }
+ const play=event=>start([event],false);
+ async function pauseResume(){const token=generation;if(state==='playing'){await context.suspend();if(token===generation){cancelFrame();state='paused';emit()}}else if(state==='paused'){await context.resume();if(token===generation){state='playing';emit();if(kind==='score')trackPosition()}}}
+ async function toggle(event){if(kind==='preview'&&currentEvent===event&&state!=='stopped')await pauseResume();else await play(event)}
+ async function toggleSequence(events){if(kind==='score'&&state!=='stopped')await pauseResume();else await start(events,true)}
+ return {play,toggle,toggleSequence,stop,subscribePosition(fn){positionListeners.add(fn)},subscribe(fn){listeners.add(fn);fn(state)},get state(){return state},get event(){return currentEvent},get kind(){return kind}};
+})();
+
+// Unmetered harmonic suggestions do not invent SATB identities or beat positions.
+const HarmonicSuggestions={generate(events,index,key,goal='continue'){
+ const source=events[index];if(!source||source.notes.length<3)return {candidates:[],message:'先输入完整和弦，再比较连接方案。'};
+ const sorted=events.map(e=>({...e,notes:[...e.notes].sort((a,b)=>a.midi-b.midi),voices:e.notes.length===4}));
+ if(sorted[index].notes.length===4){const checked=Recommendation.generate(sorted,index,key,{cadence:goal,beats:4,rhythmUnknown:true});if(checked.candidates.length)return {...checked,candidates:checked.candidates.map(c=>({...c,reason:c.reason+' 连接检查按音区估计；未确认实际声部。'}))}}
+ const g=Recommendation.grammar(key,source,events[index-1],{cadence:goal,beat:null});const result=[];
+ for(const t of g.targets){const ints=t.quality==='maj'?[0,4,7]:t.quality==='min'?[0,3,7]:t.quality==='dim'?[0,3,6]:[0,4,7,10],bassPitch=pc(t.root+ints[t.inversions[0]]),reference=Math.min(...source.notes.map(n=>n.midi)),bass=Array.from({length:37},(_,i)=>36+i).filter(n=>pc(n)===bassPitch).sort((a,b)=>Math.abs(a-reference)-Math.abs(b-reference))[0];
+ const notes=[bass,...ints.map(i=>pc(t.root+i)).filter(p=>p!==bassPitch).map(p=>{let n=60+p;while(n<=bass)n+=12;return n})].sort((a,b)=>a-b);const raw=ChordRecognition.basic(notes,key,null),c=Classical.analyze(notes,key).find(x=>x.id==='diatonic'),spell={...Spelling.auto(key),...(c?.spelling||{})};if(!raw)continue;
+ result.push({event:{notes:notes.map(n=>Notation.fromMidi(n,spell)),beats:4},roman:Classical.roman(raw,key),symbol:PopHarmony.analyze(notes,key,spell).text,reason:t.reason+' 这是功能与音响候选；声部未指定，具体连接仍需复核。'})}
+ return {candidates:result,message:result.length?'':g.message||'当前功能不确定，暂不强行推荐。'}
+}};
+const ScoreEditor=(()=>{
+ const $=id=>document.getElementById(id);let events=[],cursor=0,rows=[],analysisMarks=[],opened=false,popup=null,pending=new Map(),zoom=1;
+ const initial=()=>({tonic:Number($('scoreTonic').value),mode:$('scoreMode').value});
+ function save(){try{localStorage.setItem('phychord-score-v1',JSON.stringify({events,key:initial()}))}catch{}}
+ function load(){try{const data=JSON.parse(localStorage.getItem('phychord-score-v1'));if(!data)return;if(data.key&&Number.isInteger(data.key.tonic)&&data.key.tonic>=0&&data.key.tonic<12&&['major','minor'].includes(data.key.mode)){$('scoreTonic').value=data.key.tonic;$('scoreMode').value=data.key.mode}if(Array.isArray(data.events))events=data.events.slice(0,256).filter(e=>Array.isArray(e.notes)&&e.notes.every(n=>{try{return Notation.parse(Notation.name(n)).midi===n.midi}catch{return false}})).map(e=>({notes:e.notes,beats:4}));cursor=events.length}catch{}}
+ function open(){if(State.mode!=='chord')return;if(!events.length){$('scoreTonic').value=State.selected.tonic;$('scoreMode').value=State.selected.mode}opened=true;$('scoreWorkspace').hidden=false;document.body.classList.add('score-open');location.hash='score';render();$('scoreStaff').focus({preventScroll:true})}
+ function close(){opened=false;pending.clear();$('scoreWorkspace').hidden=true;document.body.classList.remove('score-open');if(location.hash==='#score')history.replaceState(null,'',location.pathname+location.search);AudioPreview.stop()}
+ const spelling=k=>({...Spelling.auto(k),...(Classical.analyze(State.notes,k)[0]?.spelling||{})});
+ function preview(){const shown=events.map(e=>({...e,notes:[...e.notes]}));if(pending.size){const k=rows[cursor]?.key||rows.at(-1)?.key||initial(),map=spelling(k),notes=[...pending.values()].map(n=>Notation.fromMidi(n,map));shown[cursor]={notes,beats:4}}return shown}
+ function render(analyze=true){if(analyze)rows=ScoreAnalysis.run(events,initial());const shown=preview(),width=Math.max($('scoreStaff').clientWidth||780,(shown.length+2)*100+110);if(analyze)analysisMarks=PivotHarmony.annotations(events,rows,initial()).marks;
+ $('scoreStaff').innerHTML=Notation.svg(shown,{width,cursor,key:initial(),annotations:analysisMarks});$('scoreStaff').querySelector('svg').style.width=(width*zoom)+'px';
+ const index=Math.min(cursor,rows.length-1),r=rows[index],mark=analysisMarks[index];$('scoreSummary').textContent=mark?keyName(mark.key)+' · '+(mark.pivot?mark.pivot.old.function+' / '+mark.pivot.fresh.function:mark.function||mark.pop)+(r?.status?' · '+r.status:''):'';
+ $('predictions').replaceChildren();if(analyze)save();const active=shown[Math.min(cursor,shown.length-1)]?.notes.map(n=>n.midi)||State.notes;document.querySelectorAll('#scoreKeyboard button').forEach(b=>b.classList.toggle('active',active.includes(Number(b.dataset.note))));renderPopup();
+ }
+ function renderPopup(){if(!popup||popup.closed){popup=null;return}const shown=preview(),svg=Notation.svg(shown,{width:794,columns:6,step:100,left:115,cursor,key:initial()});popup.document.documentElement.dataset.theme=document.documentElement.dataset.theme;popup.document.getElementById('paper').innerHTML=svg;popup.document.getElementById('paper').querySelector('svg').style.minHeight='1123px'}
+ function scrollCursor(){const svg=$('scoreStaff').querySelector('svg'),line=svg?.querySelector('#scoreCursor');if(line)line.scrollIntoView({block:'nearest',inline:'nearest'})}
+ function commit(notes){AudioPreview.stop();if(!notes.length||cursor>=256)return;const k=rows[cursor]?.key||rows.at(-1)?.key||initial(),map={...Spelling.auto(k),...(Classical.analyze(notes,k)[0]?.spelling||{})};events[cursor]={notes:[...new Set(notes)].sort((a,b)=>a-b).map(n=>Notation.fromMidi(n,map)),beats:4};cursor++;pending.clear();render();scrollCursor()}
+ function midi(type,note,velocity,source,held){if(!opened||State.mode!=='chord')return;const id=source+':'+note;if(type==='noteon'&&velocity>0)pending.set(id,note);if(!held.length&&pending.size)commit([...pending.values()]);else if(pending.size)render(false)}
+ function removeCurrent(){AudioPreview.stop();pending.clear();if(!events.length){cursor=0;return}const index=Math.min(cursor,events.length-1);events.splice(index,1);cursor=Math.max(0,index-1);render();scrollCursor()}
+ function nextHarmony(){AudioPreview.stop();pending.clear();if(events.length>=256)return;const index=Math.min(cursor+1,events.length);events.splice(index,0,{notes:[],beats:4});cursor=index;render();scrollCursor()}
+ function point(event,container){const svg=container.querySelector('svg'),pt=svg.createSVGPoint();pt.x=event.clientX;pt.y=event.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
+ function edit(event,container,portrait=false){if(event.button!==0&&event.type!=='contextmenu')return;event.preventDefault();container.tabIndex=0;container.focus({preventScroll:true});const note=event.target.closest('[data-note]'),g=event.target.closest('[data-event]'),p=point(event,container);
+ const rowHeight=Number(container.querySelector('svg').dataset.systemHeight)||235,origin=portrait?Number(container.querySelector('svg').dataset.originY)||0:0,system=portrait?Math.max(0,Math.floor((p.y-origin)/rowHeight)):0,index=portrait?system*6+Math.max(0,Math.min(5,Math.round((p.x-115)/100))):Math.max(0,Math.round((p.x-110)/100));
+ if(event.type==='contextmenu'){if(!note||!g)return;AudioPreview.stop();const i=Number(g.dataset.event);events[i]?.notes.splice(Number(note.dataset.note),1);if(!events[i]?.notes.length){events.splice(i,1);cursor=Math.min(cursor,events.length)}else cursor=i;render();return}
+ if(index>events.length||index>=256)return;AudioPreview.stop();cursor=index;if(note&&g||event.target.closest('.key-box,.function-label,.roman-label,.pop-label,.pivot-functions')){cursor=g?Number(g.dataset.event):index;render();return}const clef=p.y-system*rowHeight-origin<112?'treble':'bass',k=analysisMarks[index]?.key||rows[index]?.key||rows.at(-1)?.key||initial(),n=Notation.at(p.y-system*rowHeight-origin,clef,k);
+ const alter=$('scoreAlter').value;if(alter!=='auto'){n.alter=Number(alter);n.midi=Notation.parse(n.letter+(n.alter>0?'#'.repeat(n.alter):'b'.repeat(-n.alter))+n.octave).midi}
+ if(n.midi<0||n.midi>127)return;if(!events[index])events[index]={notes:[],beats:4};if(!events[index].notes.some(o=>o.midi===n.midi))events[index].notes.push(n);events[index].notes.sort((a,b)=>a.midi-b.midi);render()
+ }
+ function portrait(){if(popup&&!popup.closed){popup.focus();return}popup=window.open('','PhyChordScore','popup,width=794,height=1123,resizable=yes,scrollbars=yes');if(!popup){$('scoreSummary').textContent='浏览器阻止了谱面窗口，请允许本页弹窗。';return}
+ popup.document.write('<!doctype html><html><head><title>PhyChord</title><style>body{margin:0;background:var(--page);color:var(--ink)}:root{--page:#fff;--ink:#000}:root[data-theme=dark]{--page:#000;--ink:#fff}#paper{width:100%;min-height:100vh}.staff-svg{width:100%;display:block}.notehead{cursor:pointer}@page{size:A4;margin:0}</style></head><body><div id="paper"></div></body></html>');popup.document.close();const paper=popup.document.getElementById('paper');paper.onclick=e=>edit(e,paper,true);paper.oncontextmenu=e=>edit(e,paper,true);popup.document.addEventListener('keydown',keyHandler);renderPopup()}
+ function keyHandler(e){if(!opened||$('settings').open||e.target.matches('input,select,textarea')||e.target.isContentEditable)return;
+ if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();removeCurrent()}
+ if(e.key==='Enter'&&!e.target.matches('button')){e.preventDefault();nextHarmony()}
+ if(e.key==='ArrowRight'){e.preventDefault();AudioPreview.stop();pending.clear();cursor=Math.min(events.length,cursor+1);render();scrollCursor()}
+ if(e.key==='ArrowLeft'){e.preventDefault();AudioPreview.stop();pending.clear();cursor=Math.max(0,cursor-1);render();scrollCursor()}
+ if(e.key==='Escape')close()}
+
+ function predict(){const i=Math.min(cursor,events.length-1);if(i<0)return;const k=rows[i].key,result=HarmonicSuggestions.generate(events,i,k,$('cadenceGoal').value);$('scoreSummary').textContent=result.message||'多种连接方案；声部与终止位置不足时保留候选。';$('predictions').replaceChildren();for(const c of result.candidates){const card=document.createElement('article');card.className='prediction';const title=document.createElement('strong');title.textContent=c.roman+' · '+c.symbol;card.append(title);const p=document.createElement('p');p.textContent=c.reason;card.append(p);const a=document.createElement('button');a.className='player-button';a.audioEvent=c.event;a.setAttribute('aria-label','播放候选和弦');a.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M13 9 L23 16 L13 23 Z" fill="currentColor"/></svg>';a.onclick=()=>AudioPreview.event===c.event?AudioPreview.toggle(c.event):AudioPreview.play(c.event);const b=document.createElement('button');b.textContent='插入';b.onclick=()=>{events.splice(i+1,0,{notes:c.event.notes,beats:4});cursor=i+2;render()};card.append(a,b);$('predictions').append(card)}}
+ function bind(){Spelling.tonics.forEach((n,i)=>{const o=document.createElement('option');o.value=i;o.textContent=n;$('scoreTonic').append(o)});load();AudioPreview.subscribePosition(index=>{if(!opened)return;cursor=index;render(false);scrollCursor()});$('openScore').onclick=open;$('closeScore').onclick=close;$('predictNext').onclick=predict;AudioPreview.subscribe(state=>{document.querySelectorAll('.player-button').forEach(button=>{const active=button.id==='listenEvent'?AudioPreview.kind==='score':button.audioEvent===AudioPreview.event,playing=active&&state==='playing';button.querySelector('path').setAttribute('d',playing?'M11 9 H15 V23 H11 Z M18 9 H22 V23 H18 Z':'M13 9 L23 16 L13 23 Z');button.setAttribute('aria-label',playing?'暂停播放':active&&state==='paused'?'继续播放':button.id==='listenEvent'?'从头播放乐谱':'播放候选和弦');button.setAttribute('aria-pressed',String(playing))})});$('listenEvent').onclick=()=>AudioPreview.toggleSequence(events);$('scoreZoom').oninput=e=>{zoom=Number(e.target.value);render()};$('scoreStaff').onclick=e=>edit(e,$('scoreStaff'));$('scoreStaff').oncontextmenu=e=>edit(e,$('scoreStaff'));$('scoreStaff').ondblclick=e=>{e.preventDefault();portrait()};for(const id of ['scoreTonic','scoreMode'])$(id).onchange=render;window.addEventListener('keydown',keyHandler);window.addEventListener('resize',()=>{if(opened)render(false)});window.addEventListener('hashchange',()=>{if(location.hash!=='#score'&&opened)close()});render();if(location.hash==='#score')open()}
+ return {bind,open,close,render,midi,portrait,removeCurrent,nextHarmony,themeChanged(){renderPopup()},cancelPending(){pending.clear();render(false)},get events(){return events},get rows(){return rows},get selected(){return cursor},get opened(){return opened}};
+})();
+
+const Settings=(()=>{
+ let preference='system',query=null;
+ function apply(){const dark=preference==='dark'||preference==='system'&&query?.matches;document.documentElement.dataset.theme=dark?'dark':'light';if(typeof ScoreEditor!=='undefined')ScoreEditor.themeChanged()}
+ function bind(){try{preference=localStorage.getItem('phychord-theme')||'system'}catch{}if(!['system','light','dark'].includes(preference))preference='system';query=window.matchMedia('(prefers-color-scheme: dark)');document.getElementById('themeSelect').value=preference;query.addEventListener('change',()=>{if(preference==='system')apply()});document.getElementById('themeSelect').onchange=e=>{preference=e.target.value;try{localStorage.setItem('phychord-theme',preference)}catch{}apply()};document.getElementById('settingsButton').onclick=()=>document.getElementById('settings').showModal();document.getElementById('settingsClose').onclick=()=>document.getElementById('settings').close();document.getElementById('keybindingsButton').onclick=()=>{const panel=document.getElementById('keybindings');panel.hidden=!panel.hidden;document.getElementById('keybindingsButton').setAttribute('aria-expanded',String(!panel.hidden))};document.getElementById('settingsConnect').onclick=MIDIInput.connect;document.getElementById('midiDevice').onchange=e=>MIDIInput.select(e.target.value);apply()}
+ return {bind};
+})();
+
+const UI=(()=>{
+ let queued=false;const $=id=>document.getElementById(id);
+ function render(){queued=false;const play=State.mode==='play',key=play?Tonality.current:State.selected;const c=ChordRecognition.recognize(State.notes,key,play?null:State.chord);
+ $('analysisDetails').hidden=play;$('otherKeys').hidden=play;$('openScore').hidden=play;$('classicalDetails').hidden=play;$('classicalCandidates').parentElement.hidden=play;document.querySelector('#spelling').parentElement.hidden=play;$('spellingStatus').hidden=play;$('inversion').hidden=play;$('history').hidden=play;$('keyControls').hidden=play;$('alternatives').hidden=play;
+ $('currentKey').textContent=key?keyName(key):(State.notes.length||State.history.length?'调性识别中':'调性识别中 · 请弹奏 2–3 个和弦');
+ $('chord').textContent=c?NAMES[c.root]+' '+(Harmony.isNeapolitan(c,key)?(c.inversion===1?'那不勒斯六和弦':'那不勒斯和弦')+'（大三）':c.type.name)+(c.bass!==c.root?' / '+NAMES[c.bass]:''):(State.notes.length?State.notes.map(n=>['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'][pc(n)]+(Math.floor(n/12)-1)).join('，'):'');
+ let label=c&&key?Harmony.label(c,key,Analysis.context(c,key)):null;
+ if(play&&c&&key){const ranked=Tonality.ranking;const confident=ranked.length&&keyName(ranked[0].key)===keyName(key)&&ranked[0].score-ranked[1].score>=3;if(!confident)label=null}
+ $('function').textContent=c?(key?(label?(Harmony.isNeapolitan(c,key)?label+' · 下属功能':label):'功能待定'):''):'';$('inversion').textContent=c?(c.inversion<0?'低音为和弦外音':c.inversion===0?'原位':'第 '+c.inversion+' 转位'):'';
+ const correction=Spelling.overrides($('spelling').value||'',State.notes);$('spellingStatus').textContent=correction.error;
+ const last=ContextHarmony.frames.at(-1),sameFrame=last&&last.notes.length===State.notes.length&&last.notes.every(n=>State.notes.includes(n));
+ const previous=sameFrame?ContextHarmony.frames.at(-2):last;
+ const candidates=key?Classical.analyze(State.notes,key,{previous,spelling:correction.map}):[];
+ const chosen=candidates[0];$('classicalDetails').replaceChildren();$('classicalCandidates').replaceChildren();
+ if(chosen){const spelling={...Spelling.auto(key),...chosen.spelling,...correction.map};
+ const rows=[['分析状态',Math.round(chosen.confidence*100)+'%（启发式证据分数）'+(candidates[1]&&chosen.confidence-candidates[1].confidence<.15?' · 多种解释接近，暂不唯一确定':'' )],['和弦名称',chosen.name+(chosen.id!=='diatonic'&&chosen.id!=='N'?'（功能候选，待上下文确认）':'')],['英文名称',chosen.en],['音响结构',Classical.acoustic(State.notes)],['功能标记',chosen.label+' / '+chosen.roman],['调性',Spelling.tonics[key.tonic]+' '+key.mode],['构成音',[...new Set([...State.notes].sort((a,b)=>a-b).map(pc))].map(n=>spelling[n]||NAMES[n]).join('–')],['和声功能',chosen.function],['转位 / 低音',chosen.inversion||'按实际低音'],['典型解决',chosen.resolution]];
+ for(const [name,value] of rows){const div=document.createElement('div');div.textContent=name+'：'+value;$('classicalDetails').append(div)}
+ if(chosen.id!=='diatonic'){$('chord').textContent=chosen.name;
+ const contextRequired=chosen.id!=='N';$('function').textContent=chosen.label+' / '+chosen.roman+(contextRequired?'（候选）':'');}
+ if(play&&candidates.filter(x=>x.confidence>=.5).length>1)$('function').textContent+=' · 多解';
+ for(const x of candidates){const li=document.createElement('li');li.textContent=x.label+' / '+x.roman+' · '+x.name+' · '+Math.round(x.confidence*100)+'%（启发式） · '+x.evidence.join('；');$('classicalCandidates').append(li)}}
+ const popSpelling={...(key?Spelling.auto(key):{}),...(chosen?.spelling||{}),...correction.map};
+ const pop=PopHarmony.analyze(State.notes,key,popSpelling),functional=PopHarmony.useFunctional(candidates,c);
+ $('popSymbol').textContent=functional?pop.text:'';
+ if(pop.text&&!functional){$('function').textContent=pop.text;$('chord').textContent='';$('inversion').textContent=''}
+ $('popSymbol').hidden=!functional;
+ $('liveStaff').innerHTML=Notation.svg([{notes:State.notes.map(n=>Notation.fromMidi(n,popSpelling)),beats:1}],{live:true,width:300,key});
+ $('contextFindings').textContent=ContextHarmony.findings.map(x=>x.name+' · '+Math.round(x.confidence*100)+'%：'+x.reason).join('；');
+ $('alternatives').replaceChildren();if(!play&&c)for(const a of Harmony.alternatives(c,key)){const li=document.createElement('li');li.textContent=a.rel[1]+' · '+keyName(a.key)+'：'+a.label;$('alternatives').append(li)}
+ const out=c?NonChord.analyze(c,State.notes,performance.now()):[];$('outside').textContent=out.length?'和弦外音：'+out.join('，'):'';
+ $('notes').textContent=State.notes.length?'按下音符：'+State.notes.map(n=>NAMES[pc(n)]+(Math.floor(n/12)-1)).join(', '):'';$('history').textContent=play?'最近和声：'+(State.history.join(' → ')||'—'):'';
+ document.querySelectorAll('#keyboard button').forEach(b=>{b.disabled=play;b.classList.toggle('active',State.notes.includes(Number(b.dataset.note)))})}
+ return {schedule(){if(!queued){queued=true;requestAnimationFrame(render)}}};
+})();
+NAMES.forEach((name,i)=>{const o=document.createElement('option');o.value=i;o.textContent=name;document.querySelector('#tonic').append(o)});
+let whiteKeyIndex=0;
+for(let n=21;n<=108;n++){
+ const b=document.createElement('button'),black=[1,3,6,8,10].includes(pc(n));b.dataset.note=n;
+ // 52 white keys span the container; black keys overlap their shared borders.
+ // Accessible labels remain available without visible note-name markings.
+ if(black){b.className='black';b.style.left=((whiteKeyIndex-.325)*100/52)+'%';b.style.width=(.65*100/52)+'%'}
+ else{b.style.left=(whiteKeyIndex*100/52)+'%';b.style.width=(100/52)+'%';whiteKeyIndex++}
+ b.setAttribute('aria-label','切换音符 '+NAMES[pc(n)]+(Math.floor(n/12)-1));
+ b.onclick=()=>{if(State.mode!=='play')MIDIInput.event(State.notes.includes(n)?'noteoff':'noteon',n,90)};document.querySelector('#keyboard').append(b)
+}
+document.querySelector('#connect').onclick=MIDIInput.connect;
+document.querySelector('#mode').onchange=e=>{State.mode=e.target.value;Analysis.reset()};
+document.querySelector('#spelling').oninput=()=>UI.schedule();
+for(const id of ['tonic','quality'])document.getElementById(id).onchange=()=>{State.selected={tonic:Number(document.querySelector('#tonic').value),mode:document.querySelector('#quality').value};NonChord.reset();ContextHarmony.reset();State.lastSignature='';UI.schedule()};
+document.querySelector('#reset').onclick=()=>Analysis.reset();UI.schedule();
+if(typeof window!=='undefined'){for(const b of document.querySelectorAll('#keyboard button')){const copy=b.cloneNode(true);copy.onclick=()=>{if(State.mode==='play')return;const n=Number(copy.dataset.note);MIDIInput.event(State.notes.includes(n)?'noteoff':'noteon',n,90)};document.getElementById('scoreKeyboard').append(copy)}ScoreEditor.bind();Settings.bind();}
+</script></body></html>
