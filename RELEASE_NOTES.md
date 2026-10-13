@@ -1,8 +1,10 @@
-PhyChord 1.0 — 本地 MIDI 古典功能和声互动学习。
+PhyChord 1.1 — 本地 MIDI 古典与流行和声互动学习。
 
-- 实时 MIDI、88 键钢琴、全音符大谱表、和声功能/罗马数字/流行标记。
-- 乐谱鼠标与 MIDI 输入、转调候选分析、连接建议、52 BPM 顺序播放与跟随光标。
-- Windows：下载对应架构 Setup.exe。macOS：下载对应架构 DMG，或解压 ZIP 后拖入 Applications。
-- x64 用于 Intel/AMD；arm64 用于 Apple Silicon 或 Windows ARM。
-- 当前安装包未签名，macOS 未经 Apple 公证。
-- MIDI 与分析完全在本地；真实硬件与原生平台安装尚需设备验证。
+- 本地合成钢琴：力度、失谐泛音、共享共鸣器、CC64 延音，设置支持音量与静音；为轻量近似，不等同于 Pianoteq 完整物理模型。
+- 古典模式与流行模式；流行模式只识别音响结构，不推断调性或古典功能。
+- 扩充 sus、加音、六九、变化和弦及省略音配法，保留多种合理解释。
+- 乐谱入口独立置于右上角；删除后退至前一和弦，新输入在其后插入，保留前后已有和弦。
+- 移除双击五线谱打开竖屏窗口，保留横向编辑、缩放与 52 BPM 跟随播放。
+- Windows 下载对应架构 Setup.exe；macOS 下载对应架构 DMG，或解压 ZIP 将应用拖入 Applications。
+- x64 用于 Intel/AMD，arm64 用于 Apple Silicon/Windows ARM。当前未签名、未经 Apple 公证；尚未进行真实硬件与原生安装验证。
+- MIDI 输入、合成声音及和声分析均在本机运行，不需要云端网络。
