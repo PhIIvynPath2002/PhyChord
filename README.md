@@ -14,7 +14,7 @@ Chrome/Edge 也可打开独立 HTML；在“设置”连接本机 MIDI。浏览�
 - 流行模式：只显示当前输入的流行和弦及候选，不推断古典功能/调性。鼠标按住发声与高亮，松开解除。
 - 两模式 MIDI 实时读取力度 1–127，note-on 0 表示释放，CC64 延音不影响实时按下音符分析。界面 FIX VEL 开启时固定 127；鼠标始终 127。
 - 页面底部 88 键无需横向滚动；高亮键上方显示小号浅灰音名。左上谱面为 5:4。密集音头与变音符独立分列。
-- 首页右上角“打开乐谱 / FIX VEL / 设置”；MIDI 设备选择、诊断、系统/亮/暗主题、中文/English 与快捷键在设置中。
+- 首页右上角“扬声器图标 / 打开乐谱 / FIX VEL / 设置”；扬声器统一开关 MIDI、鼠标及乐谱声音，状态本机保存，关闭不影响输入分析和播放光标。MIDI 设备选择、诊断、系统/亮/暗主题、中文/English 与快捷键在设置中。
 
 声音采用内嵌 FluidR3 GM Acoustic Grand Piano 88 键采样，未使用物理建模；来源与 CC BY 3.0 US 许可见 [LICENSE-PianoSamples.md](LICENSE-PianoSamples.md)。Bravura 字形采用 SIL OFL 1.1，见 LICENSE-Bravura.txt。
 
