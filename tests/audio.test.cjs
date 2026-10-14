@@ -15,6 +15,7 @@ audio.subscribePosition(index=>positions.push(index));
 const first={notes:[{midi:60},{midi:64},{midi:67}],beats:4},second={notes:[{midi:55},{midi:59}],beats:99};
 (async()=>{
  await audio.toggleSequence([first,{notes:[]},second]);assert.equal(audio.kind,'score');assert.equal(context.oscillators.length,6);
+ const sound=vm.runInContext('SoundControl',ctx),gate=sound.output(context);sound.set(false);assert.equal(gate.gain.value,0);assert.equal(audio.state,'playing','mute keeps score playback running');assert.ok(frame,'mute keeps cursor tracking');sound.set(true);assert.equal(gate.gain.value,1);
  const beat=60/52;assert.deepEqual(positions,[0]);context.currentTime=10+beat+.001;frame();assert.deepEqual(positions,[0,2],'cursor follows original indices across empty slots');context.currentTime=10;for(const o of context.oscillators.slice(0,3)){assert.equal(o.startTime,10);assert.equal(o.stopTime,10+beat)}
  for(const o of context.oscillators.slice(3,5)){assert.equal(o.startTime,10+beat);assert.equal(o.stopTime,10+2*beat)}
  await audio.toggleSequence([second]);assert.equal(audio.state,'paused');assert.equal(context.suspended,true);assert.equal(frame,null,'paused cursor stops tracking');
