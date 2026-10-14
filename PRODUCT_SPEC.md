@@ -130,3 +130,5 @@ PhyChord 1.1.0：包含本地钢琴合成、古典/流行模式、扩充流行�
 ## PhyChord 2.2.1 发布与安装器修复
 
 用户提供的 GitHub Actions 日志确认 Windows 两架构 NSIS File /r 在混合反斜线/正斜线路径下匹配失败；macOS 已构建成功，但 release 依赖全部 build，因此跳过。安装脚本改用 NSIS 标准反斜线，由 POSIX 编译器自动转换；加入路径含空格的完整脚本编译回归，Windows CI 同时复现旧错误。afterPack 验证可执行文件、当前源码、版本、图标与许可证，构建后验证必要发行文件，缺失时禁止上传。2.2.1 包含最新调性选择、撤销/复原和古典 MIDI 写入功能，并保留既有功能与硬件验证边界。
+
+2.2.1 发布结果：GitHub Actions 38538979334 四架构原生 build 与 release 全部通过；Windows 原生路径对照回归通过，API 确认正式 Release 的 9 个附件已上传。安装及 MIDI 硬件验证仍保留上述边界。

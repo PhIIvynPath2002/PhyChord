@@ -26,4 +26,8 @@ Linux 路径回归与交叉构建不能替代 Windows 原生 job 或真实安装
 
 推送 v2.2.1 触发四架构原生构建；全部成功后 release job 上传安装器、图标资源、独立 HTML 和 SHA256 校验和。旧 v2.1.1 失败记录保留，新版不覆盖旧标签。
 
-当前云环境的 GitHub API 域名访问受限，Git push 与 Actions 发布使用不同通道。已在环境配置草稿保留原允许域名并新增 api.github.com；配置应用后还需重试 API，不能把草稿保存当作访问或附件上传成功。
+本次云环境初始无法访问 GitHub API，随后在配置草稿保留原域名并新增 api.github.com，后续实际 API 查询已成功。配置保存与访问成功分别验证；Actions 日志下载的重定向域名仍可能受限，不影响已核对的 job 状态与 Release 附件。
+
+## 已确认的发布结果
+
+GitHub Actions run 38538979334：Windows x64/ARM64、macOS x64/ARM64 与 release job 全部 success；Windows 原生路径回归步骤也全部 success。Release v2.2.1 已发布（draft=false），API 确认 9 个附件全部 state=uploaded，包含两 Windows EXE、两 macOS DMG、两 ZIP、独立 HTML、图标 ZIP 和 SHA256SUMS。该结果验证打包和上传，不代替实际安装与 MIDI 硬件验收。
