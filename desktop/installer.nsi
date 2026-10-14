@@ -3,6 +3,14 @@
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "FileFunc.nsh"
+Icon "${PROJECT_DIR}/build/icon.ico"
+UninstallIcon "${PROJECT_DIR}/build/icon.ico"
+!ifndef MUI_ICON
+  !define MUI_ICON "${PROJECT_DIR}/build/icon.ico"
+!endif
+!ifndef MUI_UNICON
+  !define MUI_UNICON "${PROJECT_DIR}/build/icon.ico"
+!endif
 Name "PhyChord"
 RequestExecutionLevel user
 InstallDir "$LOCALAPPDATA\Programs\PhyChord"

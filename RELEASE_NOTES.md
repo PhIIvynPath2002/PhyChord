@@ -1,10 +1,12 @@
-PhyChord 1.1 — 本地 MIDI 古典与流行和声互动学习。
+PhyChord 2.1.1 — 本地 MIDI 古典与流行和声互动学习。
 
-- 本地合成钢琴：力度、失谐泛音、共享共鸣器、CC64 延音，设置支持音量与静音；为轻量近似，不等同于 Pianoteq 完整物理模型。
-- 古典模式与流行模式；流行模式只识别音响结构，不推断调性或古典功能。
-- 扩充 sus、加音、六九、变化和弦及省略音配法，保留多种合理解释。
-- 乐谱入口独立置于右上角；删除后退至前一和弦，新输入在其后插入，保留前后已有和弦。
-- 移除双击五线谱打开竖屏窗口，保留横向编辑、缩放与 52 BPM 跟随播放。
-- Windows 下载对应架构 Setup.exe；macOS 下载对应架构 DMG，或解压 ZIP 将应用拖入 Applications。
-- x64 用于 Intel/AMD，arm64 用于 Apple Silicon/Windows ARM。当前未签名、未经 Apple 公证；尚未进行真实硬件与原生安装验证。
-- MIDI 输入、合成声音及和声分析均在本机运行，不需要云端网络。
+- 新 PhC 应用图标：Windows ICO、macOS ICNS、普通/Retina 多尺寸及圆形、方形展示资源；等比缩放与安全留白。
+- 古典/流行模式、全音符乐谱、52 BPM 跟随播放、连接建议和离线单文件继续保留。
+- 移除物理建模近似音源，统一使用内嵌 FluidR3 GM Acoustic Grand Piano 88 键采样（CC BY 3.0 US）。MIDI 读取 1–127 力度及 CC64；FIX VEL 开启固定 127，0 仍为释放。
+- 鼠标按住琴键发声；古典模式选中/取消，流行模式松开解除。乐谱底部琴键仅试听，不输入音符。
+- 中英文、升降号快捷键设置、密集音头/变音排版、中央 C 双谱表手动输入及浅灰琴键上方音名。
+- 首页仅“打开乐谱 / FIX VEL / 设置”，MIDI 连接与诊断位于设置。
+- Electron MIDI 权限修复：普通 MIDI 请求兼容 Chromium 的 midiSysex 回调，同时 preload 限制真正 SysEx 请求；沿用 default Session 和同一 Web MIDI 分析入口。
+- Windows 使用对应 x64/arm64 Setup.exe；macOS 使用对应 Intel x64 / Apple Silicon arm64 DMG，或解压 ZIP 将 PhyChord.app 拖入 Applications。
+- 未签名、未经 Apple 公证。真实 Electron 权限路径已验证，macOS/Windows 实际键盘、安装及热插拔尚未验证；按 MIDI-MACOS-TEST.md 完成设备验收后才可确认硬件修复。
+- MIDI、声音和分析均在本机处理，无需联网。网站部署继续暂停。
