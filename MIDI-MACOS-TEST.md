@@ -1,4 +1,4 @@
-# PhyChord 2.1.1 macOS MIDI 修复与实机验收
+# PhyChord 2.2.1 macOS MIDI 修复与实机验收
 
 ## 已定位的问题
 
@@ -30,10 +30,10 @@ macOS App 为交叉构建，未在 macOS 或真实 MIDI 键盘上运行，未签
 
 ## 用户实机验收步骤
 
-1. 退出旧 PhyChord；按处理器选择 arm64（Apple Silicon）或 x64（Intel），解压 ZIP，将新 PhyChord.app 放到单独目录，确认版本 2.1.1。首次启动如被 Gatekeeper 拦截，在系统设置中检查来源后按 macOS 正常授权流程允许打开。
+1. 退出旧 PhyChord；按处理器选择 arm64（Apple Silicon）或 x64（Intel），解压 ZIP，将新 PhyChord.app 放到单独目录，确认版本 2.2.1。首次启动如被 Gatekeeper 拦截，在系统设置中检查来源后按 macOS 正常授权流程允许打开。
 2. 连接已在 Chrome 验证可用的 MIDI 键盘；完全退出 Chrome，避免第三方驱动的独占情况干扰对比。打开新的 App。
 3. 设置 → MIDI 连接/刷新 → 允许本机 MIDI 权限；选择实际设备。展开 MIDI 诊断 → 刷新。
-4. 检查 framework=Electron、版本 2.1.1、secureContext=true、webMIDIPresent=true。设备应有正确 name、state=connected；权限记录应出现 midiSysex request / granted=true，随后 midi check / granted=true。
+4. 检查 framework=Electron、版本 2.2.1、secureContext=true、webMIDIPresent=true。设备应有正确 name、state=connected；权限记录应出现 midiSysex request / granted=true，随后 midi check / granted=true。
 5. 古典和流行模式分别弹单音/和弦：消息应有 note-on、note-off；力度覆盖轻/重弹，data 第三个字节为输入的 1–127。FIX VEL 关闭应随力度变化，开启应以 127 音量映射输出（原始诊断仍保留原始力度）。note-on velocity=0 作为 note-off。
 6. 按/松延音踏板：应出现 sustain-CC64，值 >=64 为踩下、<64 为抬起；音响延续与释放正确，实时识别仍按实际按键集合变化。
 7. 在按住音符时拔下设备：声音应清理，端口 state 变 disconnected；重新插入后无需重启即可再次枚举、选择并接收消息。

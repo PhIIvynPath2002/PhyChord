@@ -1,10 +1,10 @@
-# PhyChord 2.1.1
+# PhyChord 2.2.1
 
 离线 MIDI 古典和声学习与流行和弦分析软件。`index.html` 内嵌 CSS、JavaScript、Bravura 乐谱字形和 FluidR3 GM 钢琴采样，无运行时 CDN、字体或分析网络请求。
 
 ## 下载和运行
 
-GitHub [Releases](https://github.com/PhIIvynPath2002/PhyChord/releases/tag/v2.1.1) 的 Assets 提供 Windows x64/arm64 安装器与 macOS Intel/Apple Silicon DMG/ZIP。Windows 运行 Setup.exe；macOS 拖入 Applications。安装包未签名/未公证，实机安装及 MIDI 验收尚未完成。
+GitHub [Releases](https://github.com/PhIIvynPath2002/PhyChord/releases/tag/v2.2.1) 的 Assets 提供 Windows x64/arm64 安装器与 macOS Intel/Apple Silicon DMG/ZIP。Windows 运行 Setup.exe；macOS 拖入 Applications。安装包未签名/未公证，实机安装及 MIDI 验收尚未完成。
 
 Chrome/Edge 也可打开独立 HTML；在“设置”连接本机 MIDI。浏览器要求安全上下文，file:// 不可用时可本地启动 `python3 -m http.server 8000`。不需要互联网。网站部署暂时跳过。
 
@@ -34,7 +34,7 @@ Chrome/Edge 也可打开独立 HTML；在“设置”连接本机 MIDI。浏览�
 
 区分音响、拼写、调性功能和上下文；sus、6/9、加音、变化、十一/十三及省略音配法保留多解。属十一常省三音，完整属九加十一记为 `9(add11)`。没有真实声部或乐句节奏时，不宣称已验证严格四部连接或唯一终止/转调；参阅 PRODUCT_SPEC.md 和 THEORY_SOURCES.md。
 
-Electron 44.7.0 的普通 Web MIDI 请求触发 `midiSysex` 权限回调，旧权限规则拒绝导致 NotAllowedError。2.1.1 修复此路径，并添加非 SysEx preload 限制及 MIDI 诊断，保留原 default Session 和网页版 MIDI 实现。真实 Electron 权限回调已验证；云环境没有 macOS MIDI 键盘，不能宣称硬件修复完全验证。根因和设备测试步骤见 [MIDI-MACOS-TEST.md](MIDI-MACOS-TEST.md)。
+Electron 44.7.0 的普通 Web MIDI 请求触发 `midiSysex` 权限回调，旧权限规则拒绝导致 NotAllowedError。2.2.1 修复此路径，并添加非 SysEx preload 限制及 MIDI 诊断，保留原 default Session 和网页版 MIDI 实现。真实 Electron 权限回调已验证；云环境没有 macOS MIDI 键盘，不能宣称硬件修复完全验证。根因和设备测试步骤见 [MIDI-MACOS-TEST.md](MIDI-MACOS-TEST.md)。
 
 ## 开发与构建
 
@@ -47,6 +47,16 @@ npm run build:macos
 
 浏览器测试需 Chromium，默认 `/usr/bin/chromium`，可用 `PHYCHORD_CHROMIUM` 指定。真实 Electron 测试另运行 `npm run test:desktop-runtime`，可用 `PHYCHORD_ELECTRON` 指定二进制；Linux 需要显示服务，缺少 MIDI 后端不算设备通过。
 
-本地交叉构建输出 Windows Setup.exe 和 macOS ZIP；标签 `v2.1.1` 触发 GitHub 原生 Windows/macOS 构建，macOS 同时生成 DMG，然后发布版本、图标资源、单文件 HTML 和 SHA256 校验和。所有构建架构必须成功才发布。
+本地交叉构建输出 Windows Setup.exe 和 macOS ZIP；标签 `v2.2.1` 触发 GitHub 原生 Windows/macOS 构建，macOS 同时生成 DMG，然后发布版本、图标资源、单文件 HTML 和 SHA256 校验和。所有构建架构必须成功才发布。
 
 图标在 `build/icons`，ICO/ICNS 在 `build`；比例不变，圆形与 maskable 版本保留安全留白。资源已提交，构建无需生成图片。仅重新导出时需要 ImageMagick 7 和 `npm run icons`。
+
+## 最新编辑功能
+
+调性选择现为 `♮ / # / b → C D E F G A B → 大调/小调`，首页和乐谱一致。所选拼写保留，例如 F♯ 与 G♭ 显示各自调号；♮ 选项不让自然主音额外出现还原符。
+
+古典模式的 🖊️ 开关开启后，依次弹奏的 MIDI 音符会累计为一个和弦，松键仍正常释放声音。长按 Delete/Backspace 400ms 重置当前和弦（正常古典模式同样适用），写入开关保持开启；流行模式不累计。打开乐谱时暂停主界面累计，乐谱录入逻辑保持。
+
+乐谱 Command+Z 撤销，Command+X 复原；Windows 可用 Ctrl。覆盖音符、MIDI 和声、删除、插入和调性修改，并恢复光标，最多保留本次运行的 128 步。新增编辑后原复原分支清除；文本输入栏保留原生文字快捷键。
+
+Windows 发布修复：2.1.1 的 NSIS 脚本把 Windows 根路径与 `/dist/.../*` 拼接，导致 File 通配匹配失败；两 Windows 构建失败使整个 Release 跳过。2.2.1 改用 NSIS 标准反斜线；路径回归可运行 `node tests/installer-paths.test.cjs`（使用 electron-builder 的校验下载工具）。原生 Windows CI 另验证旧写法确实失败，所有构建增加源码和必需附件检查。

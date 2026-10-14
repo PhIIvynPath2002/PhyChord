@@ -3,13 +3,15 @@
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "FileFunc.nsh"
-Icon "${PROJECT_DIR}/build/icon.ico"
-UninstallIcon "${PROJECT_DIR}/build/icon.ico"
+; NSIS File globbing on Windows needs native backslash separators. POSIX
+; makensis translates these automatically; mixed /dist/.../* breaks Win32 globbing.
+Icon "${PROJECT_DIR}\build\icon.ico"
+UninstallIcon "${PROJECT_DIR}\build\icon.ico"
 !ifndef MUI_ICON
-  !define MUI_ICON "${PROJECT_DIR}/build/icon.ico"
+  !define MUI_ICON "${PROJECT_DIR}\build\icon.ico"
 !endif
 !ifndef MUI_UNICON
-  !define MUI_UNICON "${PROJECT_DIR}/build/icon.ico"
+  !define MUI_UNICON "${PROJECT_DIR}\build\icon.ico"
 !endif
 Name "PhyChord"
 RequestExecutionLevel user
@@ -45,17 +47,17 @@ Section "Install"
    ReadEnvStr $1 "PROCESSOR_ARCHITECTURE"
    ${If} $0 == "ARM64"
    ${OrIf} $1 == "ARM64"
-     File /r "${PROJECT_DIR}/dist/win-arm64-unpacked/*"
+     File /r "${PROJECT_DIR}\dist\win-arm64-unpacked\*"
    ${Else}
      !ifdef APP_64
-       File /r "${PROJECT_DIR}/dist/win-unpacked/*"
+       File /r "${PROJECT_DIR}\dist\win-unpacked\*"
      !else
        MessageBox MB_OK "此安装包需要 Windows ARM64。"
        Abort
      !endif
    ${EndIf}
  !else
-   File /r "${PROJECT_DIR}/dist/win-unpacked/*"
+   File /r "${PROJECT_DIR}\dist\win-unpacked\*"
  !endif
  FileOpen $0 "$INSTDIR\.phychord-install" w
  FileWrite $0 "com.phychord.app"

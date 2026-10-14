@@ -10,7 +10,7 @@ class AudioContext {
  createBufferSource(){const o={playbackRate:{},connect(){},disconnect(){},start(t){this.startTime=t},stop(t){this.stopTime=t}};this.oscillators.push(o);return o}
  createGain(){return {gain:{setValueAtTime(){},linearRampToValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){},disconnect(){}}}
 }
-const ctx=vm.createContext({atob:text=>Buffer.from(text,'base64').toString('binary'),window:{AudioContext,requestAnimationFrame(fn){frame=fn;return 1},cancelAnimationFrame(){frame=null}},console});vm.runInContext(source.slice(0,source.indexOf('\nNAMES.forEach')),ctx);const audio=vm.runInContext('AudioPreview',ctx);
+const ctx=vm.createContext({atob:text=>Buffer.from(text,'base64').toString('binary'),window:{AudioContext,requestAnimationFrame(fn){frame=fn;return 1},cancelAnimationFrame(){frame=null}},console});vm.runInContext(source.slice(0,source.indexOf('\n// Browser initialization.')),ctx);const audio=vm.runInContext('AudioPreview',ctx);
 audio.subscribePosition(index=>positions.push(index));
 const first={notes:[{midi:60},{midi:64},{midi:67}],beats:4},second={notes:[{midi:55},{midi:59}],beats:99};
 (async()=>{

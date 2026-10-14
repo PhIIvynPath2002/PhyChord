@@ -1,6 +1,6 @@
 'use strict';
 const vm=require('node:vm'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const code=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];const ctx={assert,console};vm.createContext(ctx);vm.runInContext(code.slice(0,code.indexOf('\nNAMES.forEach')),ctx);
+const code=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];const ctx={assert,console};vm.createContext(ctx);vm.runInContext(code.slice(0,code.indexOf('\n// Browser initialization.')),ctx);
 vm.runInContext(`
 let count=0;const C={tonic:0,mode:'major'};
 const has=(list,rule,category)=>list.some(x=>x.rule===rule&&(!category||x.category===category));

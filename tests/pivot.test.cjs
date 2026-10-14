@@ -1,5 +1,5 @@
 'use strict';
-const fs=require('fs'),vm=require('vm'),path=require('path'),assert=require('assert/strict');const source=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];const ctx={assert,console};vm.createContext(ctx);vm.runInContext(source.slice(0,source.indexOf('\nNAMES.forEach')),ctx);vm.runInContext(`
+const fs=require('fs'),vm=require('vm'),path=require('path'),assert=require('assert/strict');const source=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];const ctx={assert,console};vm.createContext(ctx);vm.runInContext(source.slice(0,source.indexOf('\n// Browser initialization.')),ctx);vm.runInContext(`
 let count=0;const check=(b,m)=>{assert.ok(b,m);count++},C={tonic:0,mode:'major'},G={tonic:7,mode:'major'},F={tonic:5,mode:'major'},a={tonic:9,mode:'minor'};
 const event=text=>({notes:text.split(' ').map(Notation.parse),beats:4});
 check(PivotHarmony.keyLabel({tonic:10,mode:'major'})==='bB','flat B major box');check(PivotHarmony.keyLabel({tonic:6,mode:'minor'})==='#f','sharp f minor box');check(PivotHarmony.keyLabel({tonic:9,mode:'major'})==='A','A major box');

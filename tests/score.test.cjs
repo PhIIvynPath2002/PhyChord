@@ -1,5 +1,5 @@
 'use strict';
-const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');const code=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];const ctx={console,assert};vm.createContext(ctx);vm.runInContext(code.slice(0,code.indexOf('\nNAMES.forEach')),ctx);
+const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');const code=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1];const ctx={console,assert};vm.createContext(ctx);vm.runInContext(code.slice(0,code.indexOf('\n// Browser initialization.')),ctx);
 vm.runInContext(`
 let checks=0;const test=(yes,message)=>{assert.ok(yes,message);checks++};const C={tonic:0,mode:'major'};
 const event=(text,voices=true,beats=1)=>({notes:text.split(' ').map(Notation.parse),voices,beats});
