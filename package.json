@@ -1,6 +1,6 @@
 {
   "name": "phychord",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "Offline interactive classical harmony learning with local MIDI",
   "author": "PhyChord",
   "private": true,
@@ -39,7 +39,7 @@
     "asar": true,
     "win": {
       "target": "nsis",
-      "artifactName": "PhyChord2.2.2-Windows-${arch}-Setup.${ext}",
+      "artifactName": "PhyChord2.2.3-Windows-${arch}-Setup.${ext}",
       "icon": "build/icon.ico"
     },
     "nsis": {
@@ -59,10 +59,10 @@
       "target": "zip",
       "category": "public.app-category.education",
       "identity": null,
-      "artifactName": "PhyChord2.2.2-macOS-${arch}.${ext}",
+      "artifactName": "PhyChord2.2.3-macOS-${arch}.${ext}",
       "icon": "build/icon.icns"
     },
-    "artifactName": "PhyChord2.2.2-${os}-${arch}.${ext}",
+    "artifactName": "PhyChord2.2.3-${os}-${arch}.${ext}",
     "afterPack": "desktop/verify-pack.cjs"
   }
 }
