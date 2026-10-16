@@ -1,12 +1,12 @@
 {
   "name": "phychord",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Offline interactive classical harmony learning with local MIDI",
   "author": "PhyChord",
   "private": true,
   "main": "desktop/main.cjs",
   "scripts": {
-    "test": "node tests/classical.test.cjs && node tests/voice-leading.test.cjs && node tests/score.test.cjs && node tests/pivot.test.cjs && node tests/engraving.test.cjs && node tests/desktop-security.test.cjs && node tests/audio.test.cjs && node tests/piano.test.cjs && node tests/pop.test.cjs && node tests/browser.test.cjs && node tests/interactions.test.cjs && node tests/icons.test.cjs && node tests/key-capture-history.test.cjs",
+    "test": "node tests/classical.test.cjs && node tests/voice-leading.test.cjs && node tests/score.test.cjs && node tests/pivot.test.cjs && node tests/engraving.test.cjs && node tests/desktop-security.test.cjs && node tests/audio.test.cjs && node tests/piano.test.cjs && node tests/pop.test.cjs && node tests/browser.test.cjs && node tests/interactions.test.cjs && node tests/icons.test.cjs && node tests/key-capture-history.test.cjs && node tests/harmony-upgrade.test.cjs",
     "start": "electron .",
     "build:windows": "node desktop/build.cjs windows",
     "build:macos": "node desktop/build.cjs macos",
@@ -39,7 +39,7 @@
     "asar": true,
     "win": {
       "target": "nsis",
-      "artifactName": "PhyChord2.2.1-Windows-${arch}-Setup.${ext}",
+      "artifactName": "PhyChord2.2.2-Windows-${arch}-Setup.${ext}",
       "icon": "build/icon.ico"
     },
     "nsis": {
@@ -59,10 +59,10 @@
       "target": "zip",
       "category": "public.app-category.education",
       "identity": null,
-      "artifactName": "PhyChord2.2.1-macOS-${arch}.${ext}",
+      "artifactName": "PhyChord2.2.2-macOS-${arch}.${ext}",
       "icon": "build/icon.icns"
     },
-    "artifactName": "PhyChord2.2.1-${os}-${arch}.${ext}",
+    "artifactName": "PhyChord2.2.2-${os}-${arch}.${ext}",
     "afterPack": "desktop/verify-pack.cjs"
   }
 }
