@@ -781,7 +781,8 @@ const SamplePiano=(()=>{
  }
  const result={buffer:copy,loopStart:start,loopEnd:end,decayTau,peak};prepared.set(buffer,result);return result;
  }
- function releaseTau(profile,midi,velocity){const damper=(.045+.11*2**((60-midi)/36))*(.7+.5*velocity/127),treble=Math.max(0,Math.min(1,(midi-84)/24));return Math.max(.025,Math.min(profile.decayTau,damper*(1-treble)+profile.decayTau*treble))}
+ // Nominal MIDI damper release: 0.20s → 0.08s. Retain register/velocity variation.
+ function releaseTau(profile,midi,velocity){const releaseScale=.08/.20,damper=(.045+.11*2**((60-midi)/36))*(.7+.5*velocity/127),treble=Math.max(0,Math.min(1,(midi-84)/24));return releaseScale*Math.max(.025,Math.min(profile.decayTau,damper*(1-treble)+profile.decayTau*treble))}
 
  return {buffer,sampleNote,prepare,releaseTau};
 })();
