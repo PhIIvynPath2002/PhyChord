@@ -60,3 +60,9 @@ npm run build:macos
 乐谱 Command+Z 撤销，Command+X 复原；Windows 可用 Ctrl。覆盖音符、MIDI 和声、删除、插入和调性修改，并恢复光标，最多保留本次运行的 128 步。新增编辑后原复原分支清除；文本输入栏保留原生文字快捷键。
 
 Windows 发布修复：2.1.1 的 NSIS 脚本把 Windows 根路径与 `/dist/.../*` 拼接，导致 File 通配匹配失败；两 Windows 构建失败使整个 Release 跳过。2.2.1 改用 NSIS 标准反斜线；路径回归可运行 `node tests/installer-paths.test.cjs`（使用 electron-builder 的校验下载工具）。原生 Windows CI 另验证旧写法确实失败，所有构建增加源码和必需附件检查。
+
+## License / 开源许可证
+
+PhyChord 的原创项目代码采用 [MIT License](LICENSE)，允许商用、修改和分发，须保留版权和许可声明。
+
+第三方资源继续遵循各自许可，不因项目代码采用 MIT 而变更：Bravura 乐谱字形为 SIL OFL 1.1，见 [LICENSE-Bravura.txt](LICENSE-Bravura.txt)；FluidR3 GM 钢琴采样为 CC BY 3.0 US，来源、署名和使用要求见 [LICENSE-PianoSamples.md](LICENSE-PianoSamples.md)。第三方依赖亦遵循其各自许可证。
